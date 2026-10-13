@@ -1,0 +1,151 @@
+{
+  "common": {
+    "appName": "شہری رپورٹ",
+    "loading": "لوڈ ہو رہا ہے...",
+    "error": "کوئی مسئلہ پیش آ گیا",
+    "tryAgain": "دوبارہ کوشش کریں",
+    "backToMap": "نقشے پر واپس جائیں",
+    "noResults": "کوئی نتائج نہیں ملے",
+    "submit": "جمع کرائیں",
+    "cancel": "منسوخ کریں",
+    "delete": "حذف کریں",
+    "save": "محفوظ کریں",
+    "login": "لاگ ان",
+    "register": "رجسٹر کریں",
+    "logout": "لاگ آؤٹ",
+    "anonymous": "گمنام"
+  },
+  "nav": {
+    "map": "نقشہ",
+    "myReports": "میری رپورٹس",
+    "dashboard": "ڈیش بورڈ",
+    "transparency": "شفافیت",
+    "leaderboard": "لیڈر بورڈ",
+    "liveConnected": "براہ راست منسلک",
+    "reconnecting": "دوبارہ رابطہ ہو رہا ہے..."
+  },
+  "map": {
+    "filterAll": "تمام",
+    "nearMe": "میرے قریب",
+    "listView": "فہرست کا منظر",
+    "mapView": "نقشے کا منظر",
+    "switchToMap": "نقشے کے منظر پر جائیں",
+    "switchToList": "فہرست کے منظر پر جائیں",
+    "noIssuesFilter": "ان فلٹرز کے مطابق کوئی مسائل نہیں ملے",
+    "noIssuesYet": "یہاں ابھی تک کوئی مسئلہ رپورٹ نہیں ہوا — پہلے بنیں!",
+    "reportNew": "نیا مسئلہ رپورٹ کریں",
+    "loginToReport": "مسئلہ رپورٹ کرنے کے لیے براہ کرم لاگ ان کریں",
+    "heatmapView": "ہیٹ میپ",
+    "markersView": "نشانات"
+  },
+  "categories": {
+    "pothole": "گڑھا",
+    "streetlight": "اسٹریٹ لائٹ",
+    "garbage": "کوڑا کرکٹ",
+    "water": "پانی کا مسئلہ",
+    "other": "دیگر"
+  },
+  "statuses": {
+    "pending": "زیر التواء",
+    "inProgress": "کام جاری ہے",
+    "resolved": "حل شدہ",
+    "allStatuses": "تمام حالتیں"
+  },
+  "report": {
+    "title": "مسئلہ رپورٹ کریں",
+    "issueTitle": "عنوان",
+    "titlePlaceholder": "مسئلے کی مختصر تفصیل",
+    "description": "تفصیل",
+    "descriptionPlaceholder": "مسئلے کے بارے میں مزید تفصیلات فراہم کریں",
+    "category": "زمرہ",
+    "selectCategory": "زمرہ منتخب کریں",
+    "location": "مقام",
+    "dropPin": "مقام کا تعین کرنے کے لیے نقشے پر کلک کریں",
+    "useGPS": "میرا موجودہ مقام استعمال کریں",
+    "photo": "تصویر",
+    "uploadPhoto": "تصویر اپ لوڈ کریں",
+    "dragDrop": "یا فائل یہاں لا کر چھوڑیں",
+    "photoFormats": "JPEG، PNG، WebP زیادہ سے زیادہ 5MB",
+    "submitting": "جمع ہو رہا ہے...",
+    "submitReport": "رپورٹ جمع کرائیں",
+    "reportSuccess": "مسئلہ کامیابی سے رپورٹ ہو گیا!",
+    "reportError": "رپورٹ جمع کرنے میں ناکامی",
+    "draftRestored": "پچھلے سیشن کا مسودہ بحال کر دیا گیا ہے"
+  },
+  "issue": {
+    "upvote": "اس مسئلے کی تائید کریں",
+    "removeUpvote": "تائید واپس لیں",
+    "loginToUpvote": "تائید کے لیے لاگ ان کریں",
+    "upvoteFailed": "تائید کرنے میں ناکامی",
+    "comments": "تبصرے",
+    "noComments": "ابھی تک کوئی تبصرہ نہیں ہے۔ پہلا تبصرہ آپ کریں۔",
+    "writeComment": "تبصرہ لکھیں...",
+    "commentFailed": "تبصرہ شامل کرنے میں ناکامی",
+    "photoAlt": "رپورٹ شدہ {category} مسئلے کی تصویر",
+    "statusUpdated": "حالت {status} میں تبدیل کر دی گئی",
+    "statusFailed": "حالت تبدیل کرنے میں ناکامی"
+  },
+  "admin": {
+    "title": "ایڈمن ڈیش بورڈ",
+    "analytics": "تجزیات",
+    "totalIssues": "کل مسائل",
+    "searchIssues": "مسائل تلاش کریں...",
+    "noIssues": "کوئی مسئلہ نہیں ملا",
+    "deleteConfirm": "کیا آپ واقعی \"{title}\" کو حذف کرنا چاہتے ہیں؟ اس عمل کو واپس نہیں لایا جا سکتا۔",
+    "deleteIssue": "مسئلہ حذف کریں",
+    "deleteSuccess": "مسئلہ حذف کر دیا گیا",
+    "deleteFailed": "مسئلہ حذف کرنے میں ناکامی",
+    "statusSuccess": "حالت اپ ڈیٹ ہو گئی",
+    "statusFailed": "حالت اپ ڈیٹ کرنے میں ناکامی",
+    "loadFailed": "مسائل لوڈ کرنے میں ناکامی",
+    "adminControls": "ایڈمن اختیارات",
+    "status": "حالت",
+    "export": "CSV برآمد کریں"
+  },
+  "transparency": {
+    "title": "عوامی شفافیت",
+    "subtitle": "حقیقی وقت کا احتساب۔ دیکھیں کہ آپ کی کمیونٹی میں رپورٹ ہونے والے شہری مسائل کیسے حل ہو رہے ہیں۔",
+    "totalReported": "کل رپورٹ شدہ",
+    "resolved": "حل شدہ",
+    "resolutionRate": "حل کرنے کی شرح",
+    "avgResponseTime": "اوسط ردعمل کا وقت",
+    "byCategory": "زمرہ کے لحاظ سے مسائل"
+  },
+  "leaderboard": {
+    "title": "عوامی لیڈر بورڈ",
+    "subtitle": "کمیونٹی میں مثبت تبدیلی لانے والے بہترین شہری رپورٹرز",
+    "rank": "درجہ",
+    "reporter": "رپورٹر",
+    "issuesReported": "رپورٹ شدہ مسائل",
+    "upvotesReceived": "موصولہ تائیدیں",
+    "communityVerified": "کمیونٹی تصدیق شدہ",
+    "noLeaders": "ابھی کوئی لیڈرز نہیں ہیں",
+    "beFirst": "مسئلہ رپورٹ کرنے اور لیڈر بورڈ پر آنے والے پہلے بنیں!"
+  },
+  "myReports": {
+    "title": "میری رپورٹس",
+    "noReports": "آپ نے ابھی تک کوئی مسئلہ رپورٹ نہیں کیا ہے۔ اپنی کمیونٹی کی مدد کرنے کے لیے پہلے بنیں۔"
+  },
+  "auth": {
+    "loginTitle": "اپنے اکاؤنٹ میں سائن ان کریں",
+    "registerTitle": "نیا اکاؤنٹ بنائیں",
+    "email": "ای میل",
+    "password": "پاس ورڈ",
+    "name": "پورا نام",
+    "loginButton": "سائن ان",
+    "registerButton": "اکاؤنٹ بنائیں",
+    "noAccount": "اکاؤنٹ نہیں ہے؟",
+    "hasAccount": "پہلے سے اکاؤنٹ موجود ہے؟",
+    "signUp": "رجسٹر کریں",
+    "signIn": "لاگ ان کریں"
+  },
+  "offline": {
+    "banner": "آپ آف لائن ہیں — پہلے سے محفوظ کردہ ڈیٹا دکھایا جا رہا ہے"
+  },
+  "time": {
+    "justNow": "ابھی",
+    "minutesAgo": "{count} منٹ پہلے",
+    "hoursAgo": "{count} گھنٹے پہلے",
+    "daysAgo": "{count} دن پہلے"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "common": {
+    "appName": "CivicReport",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "tryAgain": "Try again",
+    "backToMap": "Back to map",
+    "noResults": "No results found",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Log out",
+    "anonymous": "Anonymous"
+  },
+  "nav": {
+    "map": "Map",
+    "myReports": "My Reports",
+    "dashboard": "Dashboard",
+    "transparency": "Transparency",
+    "leaderboard": "Leaderboard",
+    "liveConnected": "Live connected",
+    "reconnecting": "Reconnecting..."
+  },
+  "map": {
+    "filterAll": "All",
+    "nearMe": "Near Me",
+    "listView": "List View",
+    "mapView": "Map View",
+    "switchToMap": "Switch to map view",
+    "switchToList": "Switch to list view",
+    "noIssuesFilter": "No issues match these filters",
+    "noIssuesYet": "No issues reported here yet — be the first!",
+    "reportNew": "Report new issue",
+    "loginToReport": "Please login to report an issue",
+    "heatmapView": "Heatmap",
+    "markersView": "Markers"
+  },
+  "categories": {
+    "pothole": "Pothole",
+    "streetlight": "Streetlight",
+    "garbage": "Garbage",
+    "water": "Water Issue",
+    "other": "Other"
+  },
+  "statuses": {
+    "pending": "Pending",
+    "inProgress": "In Progress",
+    "resolved": "Resolved",
+    "allStatuses": "All Statuses"
+  },
+  "report": {
+    "title": "Report an Issue",
+    "issueTitle": "Title",
+    "titlePlaceholder": "Brief description of the issue",
+    "description": "Description",
+    "descriptionPlaceholder": "Provide more details about the issue",
+    "category": "Category",
+    "selectCategory": "Select a category",
+    "location": "Location",
+    "dropPin": "Click on the map to set location",
+    "useGPS": "Use my current location",
+    "photo": "Photo",
+    "uploadPhoto": "Upload a photo",
+    "dragDrop": "or drag and drop",
+    "photoFormats": "JPEG, PNG, WebP up to 5MB",
+    "submitting": "Submitting...",
+    "submitReport": "Submit Report",
+    "reportSuccess": "Issue reported!",
+    "reportError": "Failed to submit report",
+    "draftRestored": "Draft restored from your previous session"
+  },
+  "issue": {
+    "upvote": "Upvote this issue",
+    "removeUpvote": "Remove upvote",
+    "loginToUpvote": "Please login to upvote",
+    "upvoteFailed": "Failed to upvote",
+    "comments": "Comments",
+    "noComments": "No comments yet. Be the first to comment.",
+    "writeComment": "Write a comment...",
+    "commentFailed": "Failed to add comment",
+    "photoAlt": "Photo of reported {category} issue",
+    "statusUpdated": "Status updated to {status}",
+    "statusFailed": "Failed to update status"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "analytics": "Analytics",
+    "totalIssues": "Total Issues",
+    "searchIssues": "Search issues...",
+    "noIssues": "No issues found",
+    "deleteConfirm": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+    "deleteIssue": "Delete Issue",
+    "deleteSuccess": "Issue deleted",
+    "deleteFailed": "Failed to delete issue",
+    "statusSuccess": "Status updated",
+    "statusFailed": "Failed to update status",
+    "loadFailed": "Failed to load issues",
+    "adminControls": "Admin Controls",
+    "status": "Status",
+    "export": "Export CSV"
+  },
+  "transparency": {
+    "title": "Public Transparency",
+    "subtitle": "Real-time accountability. See how reported civic issues are being addressed in your community.",
+    "totalReported": "Total Reported",
+    "resolved": "Resolved",
+    "resolutionRate": "Resolution Rate",
+    "avgResponseTime": "Avg. Response Time",
+    "byCategory": "Issues by Category"
+  },
+  "leaderboard": {
+    "title": "Public Leaderboard",
+    "subtitle": "Top citizen reporters making a difference in the community",
+    "rank": "Rank",
+    "reporter": "Reporter",
+    "issuesReported": "Issues Reported",
+    "upvotesReceived": "Upvotes Received",
+    "communityVerified": "Community Verified",
+    "noLeaders": "No leaders yet",
+    "beFirst": "Be the first to report an issue and top the leaderboard!"
+  },
+  "myReports": {
+    "title": "My Reports",
+    "noReports": "You haven't reported any issues yet. Be the first to help your community."
+  },
+  "auth": {
+    "loginTitle": "Sign in to your account",
+    "registerTitle": "Create your account",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full Name",
+    "loginButton": "Sign In",
+    "registerButton": "Create Account",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "signUp": "Sign up",
+    "signIn": "Sign in"
+  },
+  "offline": {
+    "banner": "You're offline — showing last-loaded data"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago"
+  }
+}

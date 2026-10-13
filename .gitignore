@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment files (preserves example files)
+.env
+.env.*
+.env*.local
+!.env.example
+!*/.env.example
+
+# Next.js & Frontend builds
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.vercel/
+.next/
+out/
+build/
+dist/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing & Coverage
+coverage/
+*/coverage/
+.nyc_output/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Temporary & Upload directories
+uploads/
+*/uploads/
+tmp/
+temp/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
