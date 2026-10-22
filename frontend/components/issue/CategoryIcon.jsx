@@ -17,8 +17,10 @@ export default function CategoryIcon({ category, size = 'sm', showLabel = false 
 
   return (
     <span className="inline-flex items-center gap-1.5">
-      <Icon className={sizeClasses} style={{ color }} />
-      {showLabel && <span className="text-sm" style={{ color }}>{label}</span>}
+      <div className="p-1 rounded-lg" style={{ backgroundColor: `${color}15` }}>
+        <Icon className={sizeClasses} style={{ color }} />
+      </div>
+      {showLabel && <span className="text-sm font-medium" style={{ color }}>{label}</span>}
     </span>
   )
 }

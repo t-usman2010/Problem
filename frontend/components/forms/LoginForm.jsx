@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Link from 'next/link'
-import { LogIn } from 'lucide-react'
+import { LogIn, MapPin } from 'lucide-react'
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false)
@@ -36,10 +36,16 @@ export default function LoginForm() {
   return (
     <div className="w-full max-w-sm mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-semibold text-[#f0f0f0]">Welcome Back</h1>
-        <p className="text-sm text-[#8b8fa8] mt-2">Sign in to report civic issues</p>
+        <div className="mx-auto mb-5 relative w-fit">
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#58a6ff] to-[#bc8cff] blur-xl opacity-30" />
+          <div className="relative flex h-14 w-14 mx-auto items-center justify-center rounded-2xl bg-gradient-to-br from-[#58a6ff] to-[#bc8cff]">
+            <MapPin className="h-7 w-7 text-white" />
+          </div>
+        </div>
+        <h1 className="text-2xl font-bold text-[#f0f6fc]">Welcome Back</h1>
+        <p className="text-sm text-[#7d8590] mt-2">Sign in to report civic issues</p>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Input
           label="Email"
           type="email"
@@ -59,9 +65,9 @@ export default function LoginForm() {
           Sign In
         </Button>
       </form>
-      <p className="text-sm text-[#8b8fa8] text-center mt-6">
+      <p className="text-sm text-[#7d8590] text-center mt-8">
         Don&apos;t have an account?{' '}
-        <Link href="/register" className="text-[#3b82f6] hover:underline">Register</Link>
+        <Link href="/register" className="text-[#58a6ff] hover:text-[#79b8ff] transition-colors font-medium">Register</Link>
       </p>
     </div>
   )

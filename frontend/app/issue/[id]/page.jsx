@@ -27,22 +27,29 @@ export default function IssueDetailPage() {
     fetchIssue()
   }, [id])
 
-  if (loading) return <div className="flex items-center justify-center min-h-[calc(100vh-56px)] mt-14"><Spinner size="lg" /></div>
+  if (loading) return <div className="flex items-center justify-center min-h-[calc(100vh-64px)] mt-16"><Spinner size="lg" /></div>
 
   if (error) return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] mt-14 text-center px-4">
-      <p className="text-[#8b8fa8] mb-4">{error}</p>
-      <Link href="/map" className="text-[#3b82f6] hover:underline text-sm">Back to map</Link>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] mt-16 text-center px-4">
+      <div className="p-4 rounded-2xl bg-[#161b22] border border-[#21262d] mb-4">
+        <p className="text-[#7d8590]">{error}</p>
+      </div>
+      <Link href="/map" className="text-[#58a6ff] hover:text-[#79b8ff] text-sm font-medium transition-colors">Back to map</Link>
     </div>
   )
 
   return (
-    <div className="min-h-[calc(100vh-56px)] mt-14 px-4 py-8">
-      <Link href="/map" className="inline-flex items-center gap-1 text-sm text-[#8b8fa8] hover:text-[#f0f0f0] transition-colors mb-6">
-        <ArrowLeft className="h-4 w-4" />
-        Back to map
-      </Link>
-      {issue && <IssueDetail issue={issue} />}
+    <div className="relative min-h-[calc(100vh-64px)] mt-16 px-4 py-10">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-1/4 w-80 h-80 bg-[#58a6ff]/3 rounded-full blur-3xl" />
+      </div>
+      <div className="relative max-w-2xl mx-auto">
+        <Link href="/map" className="inline-flex items-center gap-2 text-sm text-[#7d8590] hover:text-[#f0f6fc] transition-all duration-200 mb-8 px-3 py-1.5 rounded-xl hover:bg-[#161b22]">
+          <ArrowLeft className="h-4 w-4" />
+          Back to map
+        </Link>
+        {issue && <IssueDetail issue={issue} />}
+      </div>
     </div>
   )
 }

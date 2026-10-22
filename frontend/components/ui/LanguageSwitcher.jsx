@@ -13,12 +13,12 @@ export default function LanguageSwitcher() {
   return (
     <button
       onClick={toggleLocale}
-      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#2a2d3e] bg-[#1a1d27] hover:bg-[#2a2d3e]/50 text-xs font-medium text-[#f0f0f0] transition-colors"
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#21262d] bg-[#161b22] hover:bg-[#1c2128] hover:border-[#30363d] text-xs font-medium text-[#f0f6fc] transition-all duration-200"
       aria-label={locale === 'en' ? 'Switch to Urdu (اردو)' : 'Switch to English'}
       title={locale === 'en' ? 'اردو میں دیکھیں' : 'View in English'}
     >
-      <Languages className="h-3.5 w-3.5 text-[#3b82f6]" />
-      <span className={locale === 'ur' ? 'font-semibold text-[#3b82f6]' : ''}>
+      <Languages className="h-3.5 w-3.5 text-[#58a6ff]" />
+      <span className={locale === 'ur' ? 'font-semibold text-[#58a6ff]' : ''}>
         {locale === 'en' ? 'اردو' : 'EN'}
       </span>
     </button>

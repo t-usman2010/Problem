@@ -12,7 +12,7 @@ import FilterBar from '@/components/map/FilterBar'
 import IssueCard from '@/components/issue/IssueCard'
 import EmptyState from '@/components/ui/EmptyState'
 import { MapSkeleton } from '@/components/ui/SkeletonLoader'
-import { Plus, List, Map as MapIcon, Flame } from 'lucide-react'
+import { Plus, List, Map as MapIcon, Flame, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 const MapView = dynamic(() => import('@/components/map/MapView'), {
@@ -61,7 +61,7 @@ export default function MapPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-56px)] mt-14">
+    <div className="flex flex-col h-[calc(100vh-64px)] mt-16">
       <FilterBar
         activeCategory={category}
         activeStatus={status}
@@ -72,11 +72,15 @@ export default function MapPage() {
       />
 
       {/* List/Map toggle */}
-      <div className="flex items-center justify-end px-4 py-1.5 bg-[#0f1117] border-b border-[#2a2d3e] gap-4">
+      <div className="flex items-center justify-end px-4 py-2 bg-[#06080d]/90 backdrop-blur-sm border-b border-[#21262d]/60 gap-4">
         {!showListView && (
            <button
              onClick={() => setShowHeatmap(!showHeatmap)}
-             className={`flex items-center gap-1 text-xs transition-colors ${showHeatmap ? 'text-[#3b82f6]' : 'text-[#8b8fa8] hover:text-[#f0f0f0]'}`}
+             className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
+               showHeatmap
+                 ? 'text-[#d29922] bg-[#d29922]/10 border border-[#d29922]/20'
+                 : 'text-[#7d8590] hover:text-[#f0f6fc] hover:bg-[#161b22]'
+             }`}
              aria-label={showHeatmap ? 'Hide heatmap' : 'Show heatmap'}
            >
              <Flame className="h-3.5 w-3.5" /> {t('heatmapView', { defaultValue: 'Heatmap' })}
@@ -84,7 +88,7 @@ export default function MapPage() {
          )}
          <button
            onClick={() => setShowListView(!showListView)}
-           className="flex items-center gap-1 text-xs text-[#8b8fa8] hover:text-[#f0f0f0] transition-colors"
+           className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium text-[#7d8590] hover:text-[#f0f6fc] hover:bg-[#161b22] transition-all duration-200"
            aria-label={showListView ? t('switchToMap', { defaultValue: 'Switch to map view' }) : t('switchToList', { defaultValue: 'Switch to list view' })}
          >
            {showListView ? (
@@ -101,12 +105,30 @@ export default function MapPage() {
            <div className="h-full overflow-y-auto p-4 space-y-3">
              {loading ? (
                <div className="flex items-center justify-center h-full">
-                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#2a2d3e] border-t-[#3b82f6]" />
+                 <div className="relative">
+                   <div className="absolute inset-0 rounded-full bg-[#58a6ff]/20 blur-xl animate-pulse" />
+                   <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#21262d] border-t-[#58a6ff] border-r-[#bc8cff]" />
+                 </div>
                </div>
              ) : issues.length === 0 ? (
                <EmptyState message={t('noIssuesFilter', { defaultValue: 'No issues match these filters' })} />
              ) : (
-               issues.map(issue => <IssueCard key={issue._id} issue={issue} />)
+               <motion.div
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 className="space-y-3 max-w-2xl mx-auto"
+               >
+                 {issues.map((issue, i) => (
+                   <motion.div
+                     key={issue._id}
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ delay: i * 0.05, duration: 0.3 }}
+                   >
+                     <IssueCard issue={issue} />
+                   </motion.div>
+                 ))}
+               </motion.div>
              )}
            </div>
          ) : (
@@ -127,15 +149,16 @@ export default function MapPage() {
          )}
        </div>
 
-       {/* FAB */}
+       {/* FAB - Floating Action Button with glow */}
        <motion.button
-         whileTap={{ scale: 0.97 }}
-         transition={{ duration: 0.15 }}
+         whileHover={{ scale: 1.05 }}
+         whileTap={{ scale: 0.95 }}
+         transition={{ type: 'spring', stiffness: 400, damping: 15 }}
          onClick={handleFABClick}
-         className="fixed bottom-6 end-6 z-[500] h-14 w-14 rounded-full bg-[#3b82f6] text-white shadow-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+         className="fixed bottom-8 end-8 z-[500] h-16 w-16 rounded-2xl btn-gradient text-white shadow-[0_0_30px_rgba(88,166,255,0.3),0_8px_32px_rgba(0,0,0,0.4)] flex items-center justify-center"
          aria-label={t('reportNew', { defaultValue: 'Report new issue' })}
        >
-         <Plus className="h-6 w-6" />
+         <Plus className="h-7 w-7" strokeWidth={2.5} />
        </motion.button>
     </div>
   )

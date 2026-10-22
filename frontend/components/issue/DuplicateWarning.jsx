@@ -39,16 +39,18 @@ export default function DuplicateWarning({ category, latitude, longitude }) {
   if (!nearbyIssues || nearbyIssues.length === 0) return null
 
   return (
-    <div className="rounded-lg border border-[#eab308]/30 bg-[#1a1d27] p-4 shadow-sm relative overflow-hidden">
-      <div className="absolute top-0 start-0 w-1 h-full bg-[#eab308]"></div>
-      <div className="flex items-start gap-3">
-        <AlertTriangle className="h-5 w-5 text-[#eab308] shrink-0 mt-0.5" />
+    <div className="rounded-2xl border border-[#d29922]/20 bg-[#d29922]/5 p-5 relative overflow-hidden">
+      <div className="absolute top-0 start-0 w-1 h-full bg-gradient-to-b from-[#d29922] to-[#d29922]/30"></div>
+      <div className="flex items-start gap-3.5">
+        <div className="p-2 rounded-xl bg-[#d29922]/10 shrink-0 mt-0.5">
+          <AlertTriangle className="h-4 w-4 text-[#d29922]" />
+        </div>
         <div className="flex-1 space-y-3">
           <div>
-            <h3 className="text-sm font-semibold text-[#f0f0f0]">
+            <h3 className="text-sm font-bold text-[#f0f6fc]">
               {nearbyIssues.length} similar issue{nearbyIssues.length > 1 ? 's' : ''} reported nearby
             </h3>
-            <p className="text-xs text-[#8b8fa8] mt-1">
+            <p className="text-xs text-[#7d8590] mt-1">
               Consider upvoting an existing report instead of creating a duplicate
             </p>
           </div>
@@ -65,20 +67,20 @@ export default function DuplicateWarning({ category, latitude, longitude }) {
                   key={issueId} 
                   href={`/issue/${issueId}`}
                   target="_blank"
-                  className="flex items-center justify-between p-2 rounded border border-[#2a2d3e] bg-[#0f1117]/50 hover:border-[#3b82f6] transition-colors group"
+                  className="flex items-center justify-between p-3 rounded-xl border border-[#21262d] bg-[#0d1117]/50 hover:border-[#58a6ff]/30 hover:bg-[#58a6ff]/5 transition-all duration-200 group"
                 >
                   <div className="flex-1 min-w-0 pe-4">
-                    <p className="text-sm text-[#f0f0f0] truncate">{issue.title}</p>
-                    <p className="text-xs text-[#8b8fa8]">
+                    <p className="text-sm text-[#f0f6fc] truncate font-medium">{issue.title}</p>
+                    <p className="text-xs text-[#484f58]">
                       {issue.distance ? `${Math.round(issue.distance)}m away` : 'Nearby'}
                     </p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <div className="flex items-center gap-1 text-xs text-[#8b8fa8]">
+                    <div className="flex items-center gap-1.5 text-xs text-[#7d8590] px-2 py-1 rounded-lg bg-[#161b22]">
                       <ThumbsUp className="h-3 w-3" />
                       <span>{upvoteCount}</span>
                     </div>
-                    <ExternalLink className="h-4 w-4 text-[#8b8fa8] group-hover:text-[#3b82f6]" />
+                    <ExternalLink className="h-4 w-4 text-[#484f58] group-hover:text-[#58a6ff] transition-colors" />
                   </div>
                 </Link>
               )

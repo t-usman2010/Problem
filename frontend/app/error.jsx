@@ -1,31 +1,30 @@
 'use client'
+
 import { useEffect } from 'react'
-import Button from '@/components/ui/Button'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 
-export default function ErrorBoundary({ error, reset }) {
+export default function GlobalError({ error, reset }) {
   useEffect(() => {
-    console.error('App error boundary caught error:', error)
+    console.error('Application error:', error)
   }, [error])
 
   return (
-    <div className="flex min-h-[calc(100vh-56px)] mt-14 flex-col items-center justify-center p-6 text-center">
-      <div className="rounded-full bg-red-500/10 p-4 mb-4 text-red-400">
-        <AlertTriangle className="h-8 w-8" />
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] mt-16 text-center px-4">
+      <div className="relative mb-6">
+        <div className="absolute inset-0 rounded-2xl bg-[#f85149]/20 blur-2xl" />
+        <div className="relative p-5 rounded-2xl bg-[#161b22] border border-[#f85149]/20">
+          <AlertTriangle className="h-12 w-12 text-[#f85149]" />
+        </div>
       </div>
-      <h2 className="text-xl font-semibold text-[#f0f0f0] mb-2">Something went wrong!</h2>
-      <p className="text-sm text-[#8b8fa8] max-w-md mb-6">
-        An unexpected error occurred while loading this page. You can try refreshing or returning to the map.
-      </p>
-      <div className="flex gap-3">
-        <Button variant="primary" onClick={() => reset()}>
-          <RefreshCw className="h-4 w-4" />
-          Try again
-        </Button>
-        <Button variant="secondary" onClick={() => window.location.href = '/map'}>
-          Back to Map
-        </Button>
-      </div>
+      <h2 className="text-xl font-bold text-[#f0f6fc] mb-2">Something went wrong</h2>
+      <p className="text-sm text-[#7d8590] mb-6 max-w-sm">An unexpected error occurred. Please try again.</p>
+      <button
+        onClick={reset}
+        className="btn-gradient inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white"
+      >
+        <RefreshCw className="h-4 w-4" />
+        Try again
+      </button>
     </div>
   )
 }

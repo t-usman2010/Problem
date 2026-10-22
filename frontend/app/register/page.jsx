@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Link from 'next/link'
-import { UserPlus } from 'lucide-react'
+import { UserPlus, MapPin } from 'lucide-react'
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
@@ -34,13 +34,25 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-56px)] mt-14 items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-lg border border-[#2a2d3e] bg-[#1a1d27] p-8">
+    <div className="relative flex min-h-[calc(100vh-64px)] mt-16 items-center justify-center px-4">
+      {/* Background effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-[#bc8cff]/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/3 left-1/3 w-80 h-80 bg-[#39d2c0]/5 rounded-full blur-3xl" />
+      </div>
+      <div className="relative w-full max-w-sm glass-card p-8">
+        <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-[#bc8cff]/30 to-transparent" />
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-semibold text-[#f0f0f0]">Create Account</h1>
-          <p className="text-sm text-[#8b8fa8] mt-2">Join to report and track civic issues</p>
+          <div className="mx-auto mb-5 relative w-fit">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#bc8cff] to-[#39d2c0] blur-xl opacity-30" />
+            <div className="relative flex h-14 w-14 mx-auto items-center justify-center rounded-2xl bg-gradient-to-br from-[#bc8cff] to-[#39d2c0]">
+              <UserPlus className="h-7 w-7 text-white" />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold text-[#f0f6fc]">Create Account</h1>
+          <p className="text-sm text-[#7d8590] mt-2">Join to report and track civic issues</p>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <Input
             label="Full Name"
             placeholder="Your name"
@@ -66,9 +78,9 @@ export default function RegisterPage() {
             Create Account
           </Button>
         </form>
-        <p className="text-sm text-[#8b8fa8] text-center mt-6">
+        <p className="text-sm text-[#7d8590] text-center mt-8">
           Already have an account?{' '}
-          <Link href="/login" className="text-[#3b82f6] hover:underline">Sign in</Link>
+          <Link href="/login" className="text-[#58a6ff] hover:text-[#79b8ff] transition-colors font-medium">Sign in</Link>
         </p>
       </div>
     </div>

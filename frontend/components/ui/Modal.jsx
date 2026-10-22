@@ -35,26 +35,31 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             onClick={onClose}
             aria-hidden="true"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 350 }}
             ref={modalRef}
             role="dialog"
             aria-modal="true"
             aria-label={title}
             tabIndex={-1}
-            className={`relative z-10 w-full ${maxWidth} rounded-lg border border-[#2a2d3e] bg-[#1a1d27] p-6 shadow-xl focus:outline-none`}
+            className={`relative z-10 w-full ${maxWidth} glass-card p-6 shadow-2xl focus:outline-none`}
           >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-[#f0f0f0]">{title}</h2>
+            {/* Top gradient accent line */}
+            <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-[#58a6ff]/40 to-transparent" />
+            
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-[#f0f6fc]">{title}</h2>
               <button
                 onClick={onClose}
-                className="rounded-full p-1 text-[#8b8fa8] hover:bg-[#2a2d3e] hover:text-[#f0f0f0] transition-colors"
+                className="rounded-xl p-2 text-[#7d8590] hover:bg-[#21262d] hover:text-[#f0f6fc] transition-all duration-200"
                 aria-label="Close dialog"
               >
                 <X className="h-5 w-5" />

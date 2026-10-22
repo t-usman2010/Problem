@@ -12,7 +12,7 @@ import api from '@/lib/api'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import CategoryIcon from '@/components/issue/CategoryIcon'
-import { Upload, MapPin, X, Image as ImageIcon } from 'lucide-react'
+import { Upload, MapPin, X, Image as ImageIcon, Sparkles } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
 const LocationPicker = dynamic(() => import('@/components/map/LocationPicker'), { ssr: false })
@@ -137,10 +137,17 @@ export default function ReportForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto space-y-8">
       <div>
-        <h1 className="text-xl font-semibold text-[#f0f0f0]">{t('title', { defaultValue: 'Report an Issue' })}</h1>
-        <p className="text-sm text-[#8b8fa8] mt-1">Help improve your community by reporting civic problems</p>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#58a6ff]/20 to-[#bc8cff]/20 border border-[#58a6ff]/10">
+            <Sparkles className="h-5 w-5 text-[#58a6ff]" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-[#f0f6fc]">{t('title', { defaultValue: 'Report an Issue' })}</h1>
+            <p className="text-sm text-[#7d8590]">Help improve your community by reporting civic problems</p>
+          </div>
+        </div>
       </div>
 
       {/* Title */}
@@ -152,53 +159,53 @@ export default function ReportForm() {
       />
 
       {/* Description */}
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-[#f0f0f0]">
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-[#f0f6fc]">
           {t('description', { defaultValue: 'Description (optional)' })}
         </label>
         <textarea
           {...register('description')}
           placeholder={t('descriptionPlaceholder', { defaultValue: 'Describe the issue in detail...' })}
           rows={3}
-          className="w-full rounded-lg border border-[#2a2d3e] bg-[#1a1d27] px-4 py-2.5 text-sm text-[#f0f0f0] placeholder-[#8b8fa8] focus:border-[#3b82f6] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/20 resize-none"
+          className="w-full rounded-xl border border-[#21262d] bg-[#0d1117] px-4 py-3 text-sm text-[#f0f6fc] placeholder-[#484f58] input-glow focus:border-[#58a6ff]/50 focus:outline-none transition-all resize-none"
         />
       </div>
 
       {/* Category */}
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-[#f0f0f0]">{t('category', { defaultValue: 'Category' })}</label>
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-[#f0f6fc]">{t('category', { defaultValue: 'Category' })}</label>
         <Controller
           name="category"
           control={control}
           render={({ field }) => (
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
               {CATEGORIES.map(cat => (
                 <button
                   key={cat.value}
                   type="button"
                   onClick={() => field.onChange(cat.value)}
-                  className={`flex flex-col items-center gap-1.5 rounded-lg p-3 border transition-colors ${
+                  className={`flex flex-col items-center gap-2 rounded-2xl p-4 border transition-all duration-200 ${
                     field.value === cat.value
-                      ? 'border-[#3b82f6] bg-[#3b82f6]/10'
-                      : 'border-[#2a2d3e] bg-[#1a1d27] hover:border-[#8b8fa8]'
+                      ? 'border-[#58a6ff]/40 bg-[#58a6ff]/10 shadow-[0_0_20px_rgba(88,166,255,0.1)]'
+                      : 'border-[#21262d] bg-[#0d1117] hover:border-[#30363d] hover:bg-[#161b22]'
                   }`}
                 >
                   <CategoryIcon category={cat.value} size="md" />
-                  <span className="text-xs text-[#f0f0f0]">{cat.label}</span>
+                  <span className="text-xs font-medium text-[#f0f6fc]">{cat.label}</span>
                 </button>
               ))}
             </div>
           )}
         />
         {errors.category && (
-          <p className="text-xs text-red-400" role="alert">{errors.category.message}</p>
+          <p className="text-xs text-[#f85149]" role="alert">{errors.category.message}</p>
         )}
       </div>
 
       {/* Location */}
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-[#f0f0f0]">{t('location', { defaultValue: 'Location' })}</label>
-        <div className="rounded-lg border border-[#2a2d3e] overflow-hidden" style={{ height: '300px' }}>
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-[#f0f6fc]">{t('location', { defaultValue: 'Location' })}</label>
+        <div className="rounded-2xl border border-[#21262d] overflow-hidden" style={{ height: '300px' }}>
           <LocationPicker
             onLocationSelect={handleLocationSelect}
             initialLat={latitude}
@@ -206,13 +213,13 @@ export default function ReportForm() {
           />
         </div>
         {latitude && longitude && (
-          <p className="text-xs text-[#8b8fa8] flex items-center gap-1">
-            <MapPin className="h-3 w-3" />
-            {latitude.toFixed(4)}, {longitude.toFixed(4)}
+          <p className="text-xs text-[#7d8590] flex items-center gap-1.5">
+            <MapPin className="h-3 w-3 text-[#58a6ff]" />
+            <span className="font-mono">{latitude.toFixed(4)}, {longitude.toFixed(4)}</span>
           </p>
         )}
         {(errors.latitude || errors.longitude) && (
-          <p className="text-xs text-red-400" role="alert">{t('dropPin', { defaultValue: 'Please select a location on the map' })}</p>
+          <p className="text-xs text-[#f85149]" role="alert">{t('dropPin', { defaultValue: 'Please select a location on the map' })}</p>
         )}
       </div>
 
@@ -227,15 +234,16 @@ export default function ReportForm() {
       <DuplicateWarning category={selectedCategory} latitude={latitude} longitude={longitude} />
 
       {/* Photo */}
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-[#f0f0f0]">{t('photo', { defaultValue: 'Photo (optional)' })}</label>
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-[#f0f6fc]">{t('photo', { defaultValue: 'Photo (optional)' })}</label>
         {photoPreview ? (
-          <div className="relative rounded-lg overflow-hidden border border-[#2a2d3e]">
+          <div className="relative rounded-2xl overflow-hidden border border-[#21262d] group">
             <img src={photoPreview} alt="Preview" className="w-full max-h-48 object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#06080d]/60 via-transparent to-transparent" />
             <button
               type="button"
               onClick={removePhoto}
-              className="absolute top-2 end-2 rounded-full bg-black/60 p-1 text-white hover:bg-black/80 transition-colors"
+              className="absolute top-3 end-3 rounded-xl bg-[#06080d]/70 backdrop-blur-sm p-2 text-white hover:bg-[#f85149]/20 hover:text-[#f85149] transition-all border border-white/10"
               aria-label="Remove photo"
             >
               <X className="h-4 w-4" />
@@ -245,11 +253,13 @@ export default function ReportForm() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full rounded-lg border-2 border-dashed border-[#2a2d3e] bg-[#1a1d27] p-8 text-center hover:border-[#8b8fa8] transition-colors"
+            className="w-full rounded-2xl border-2 border-dashed border-[#21262d] bg-[#0d1117] p-10 text-center hover:border-[#58a6ff]/30 hover:bg-[#58a6ff]/5 transition-all duration-200 group"
           >
-            <ImageIcon className="h-8 w-8 text-[#8b8fa8] mx-auto mb-2" />
-            <span className="text-sm text-[#8b8fa8]">{t('uploadPhoto', { defaultValue: 'Click to upload a photo' })}</span>
-            <span className="block text-xs text-[#8b8fa8] mt-1">{t('photoFormats', { defaultValue: 'JPEG, PNG, WebP up to 50MB' })}</span>
+            <div className="p-3 rounded-2xl bg-[#161b22] border border-[#21262d] w-fit mx-auto mb-3 group-hover:border-[#58a6ff]/20 transition-colors">
+              <ImageIcon className="h-8 w-8 text-[#7d8590] group-hover:text-[#58a6ff] transition-colors" />
+            </div>
+            <span className="text-sm text-[#7d8590] font-medium">{t('uploadPhoto', { defaultValue: 'Click to upload a photo' })}</span>
+            <span className="block text-xs text-[#484f58] mt-1">{t('photoFormats', { defaultValue: 'JPEG, PNG, WebP up to 50MB' })}</span>
           </button>
         )}
         <input

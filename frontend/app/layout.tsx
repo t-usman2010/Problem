@@ -23,7 +23,7 @@ const notoUrdu = Noto_Nastaliq_Urdu({
 });
 
 export const metadata: Metadata = {
-  title: "Civic Issue Reporter",
+  title: "CivicReport — Smart City Platform",
   description: "Report and track civic issues pinned on a real-time interactive map",
 };
 
@@ -34,7 +34,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${notoUrdu.variable} h-full dark antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#0f1117] text-[#f0f0f0] font-sans">
+      <body className="min-h-full flex flex-col bg-[#06080d] text-[#f0f6fc] font-sans noise-overlay">
+        {/* Animated mesh gradient background */}
+        <div className="mesh-gradient" />
+        
         <LocaleProvider>
           <AuthProvider>
             <SocketProvider>

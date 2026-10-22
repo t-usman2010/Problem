@@ -40,10 +40,10 @@ export default function ExportButton({ issues, filename = 'issues-export' }) {
   return (
     <button
       onClick={exportToCSV}
-      className="flex items-center gap-2 px-3 py-2 bg-[#1a1d27] border border-[#2a2d3e] rounded-lg text-[#f0f0f0] hover:bg-[#2a2d3e] transition-colors text-sm font-medium"
+      className="flex items-center gap-2 px-4 py-3 bg-[#161b22] border border-[#21262d] rounded-xl text-[#f0f6fc] hover:bg-[#1c2128] hover:border-[#30363d] transition-all duration-200 text-sm font-semibold"
       title="Export to CSV"
     >
-      <Download size={16} className="text-[#8b8fa8]" />
+      <Download size={16} className="text-[#7d8590]" />
       <span>Export</span>
     </button>
   );

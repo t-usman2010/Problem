@@ -9,7 +9,10 @@ export function SocketProvider({ children }) {
   const socketRef = useRef(null)
 
   useEffect(() => {
-    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL
+    if (!socketUrl) return
+
+    const socket = io(socketUrl, {
       transports: ['websocket', 'polling'],
       autoConnect: true
     })

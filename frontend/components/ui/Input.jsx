@@ -9,9 +9,9 @@ const Input = forwardRef(function Input(
   const errorId = `${inputId}-error`
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       {label && (
-        <label htmlFor={inputId} className="block text-sm font-medium text-[#f0f0f0]">
+        <label htmlFor={inputId} className="block text-sm font-medium text-[#f0f6fc]">
           {label}
         </label>
       )}
@@ -21,11 +21,12 @@ const Input = forwardRef(function Input(
         type={type}
         aria-invalid={!!error}
         aria-describedby={error ? errorId : undefined}
-        className={`w-full rounded-lg border border-[#2a2d3e] bg-[#1a1d27] px-4 py-2.5 text-sm text-[#f0f0f0] placeholder-[#8b8fa8] transition-colors focus:border-[#3b82f6] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/20 disabled:opacity-50 ${error ? 'border-red-500' : ''} ${className}`}
+        className={`w-full rounded-xl border border-[#21262d] bg-[#0d1117] px-4 py-3 text-sm text-[#f0f6fc] placeholder-[#484f58] transition-all duration-200 input-glow focus:border-[#58a6ff]/50 focus:outline-none disabled:opacity-50 ${error ? 'border-[#f85149]/50 focus:border-[#f85149] focus:shadow-[0_0_0_3px_rgba(248,81,73,0.1)]' : ''} ${className}`}
         {...props}
       />
       {error && (
-        <p id={errorId} className="text-xs text-red-400" role="alert">
+        <p id={errorId} className="text-xs text-[#f85149] flex items-center gap-1" role="alert">
+          <span className="h-1 w-1 rounded-full bg-[#f85149] shrink-0" />
           {error}
         </p>
       )}
