@@ -100,7 +100,7 @@ export default function MapPage() {
        </div>
 
        {/* Content */}
-       <div className="flex-1 relative">
+       <div className="flex-1 relative min-h-0">
          {showListView ? (
            <div className="h-full overflow-y-auto p-4 space-y-3">
              {loading ? (
@@ -132,7 +132,7 @@ export default function MapPage() {
              )}
            </div>
          ) : (
-           <div className="h-full">
+           <div className="absolute inset-0">
              {loading && issues.length === 0 ? (
                <MapSkeleton />
              ) : (

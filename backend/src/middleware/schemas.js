@@ -19,18 +19,16 @@ const createIssueSchema = z.object({
   category: z.enum(['pothole', 'streetlight', 'garbage', 'water', 'water_leak', 'road_damage', 'sewage', 'other'], {
     errorMap: () => ({ message: 'Invalid category' })
   }),
-  latitude: z.string().or(z.number()).transform(Number).pipe(
-    z.number({ invalid_type_error: 'Latitude must be a number' })
-      .min(-90, 'Latitude must be between -90 and 90')
-      .max(90, 'Latitude must be between -90 and 90')
-  ),
-  longitude: z.string().or(z.number()).transform(Number).pipe(
-    z.number({ invalid_type_error: 'Longitude must be a number' })
-      .min(-180, 'Longitude must be between -180 and 180')
-      .max(180, 'Longitude must be between -180 and 180')
-  ),
+  latitude: z.string().or(z.number()).optional(),
+  longitude: z.string().or(z.number()).optional(),
+  lat: z.string().or(z.number()).optional(),
+  lng: z.string().or(z.number()).optional(),
   address: z.string().max(300, 'Address must be at most 300 characters').trim().optional()
-})
+}).refine(data => {
+  const lat = data.latitude !== undefined ? Number(data.latitude) : (data.lat !== undefined ? Number(data.lat) : NaN)
+  const lng = data.longitude !== undefined ? Number(data.longitude) : (data.lng !== undefined ? Number(data.lng) : NaN)
+  return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180
+}, { message: 'Latitude must be between -90 and 90, and longitude between -180 and 180' })
 
 // Comment schema
 const addCommentSchema = z.object({
@@ -38,26 +36,19 @@ const addCommentSchema = z.object({
 })
 
 // Status update schema
-const updateStatusSchema = z.object({
-  status: z.enum(['pending', 'in-progress', 'resolved'], {
-    errorMap: () => ({ message: 'Status must be pending, in-progress, or resolved' })
-  }),
-  assignedDept: z.enum([
-    'Roads & Infrastructure',
-    'Street Lighting',
-    'Sanitation',
-    'Water & Sewerage',
-    'General'
-  ], {
-    errorMap: () => ({ message: 'Invalid department' })
-  }).optional().nullable()
-})
+const validDepts = [
+  'Roads & Infrastructure',
+  'Street Lighting',
+  'Sanitation',
+  'Water & Sewerage',
+  'General'
+]
 
-// User role schema
-const updateRoleSchema = z.object({
-  role: z.enum(['citizen', 'admin'], {
-    errorMap: () => ({ message: 'Role must be citizen or admin' })
-  })
+const updateStatusSchema = z.object({
+  status: z.enum(['pending', 'in-progress', 'resolved']).optional(),
+  assignedDept: z.enum(validDepts).optional()
+}).refine(data => data.status !== undefined || data.assignedDept !== undefined, {
+  message: 'At least one of status or assignedDept must be provided'
 })
 
 module.exports = {
@@ -65,6 +56,5 @@ module.exports = {
   loginSchema,
   createIssueSchema,
   addCommentSchema,
-  updateStatusSchema,
-  updateRoleSchema
+  updateStatusSchema
 }

@@ -13,16 +13,26 @@
     "login": "لاگ ان",
     "register": "رجسٹر کریں",
     "logout": "لاگ آؤٹ",
-    "anonymous": "گمنام"
+    "anonymous": "گمنام",
+    "themeSystem": "سسٹم",
+    "themeSystemDesc": "ڈیوائس کی ترتیبات کے مطابق",
+    "themeLight": "روشن",
+    "themeLightDesc": "سفید تھیم",
+    "themeDark": "تاریک",
+    "themeDarkDesc": "گہرا تھیم",
+    "switchToLight": "روشن تھیم منتخب کریں",
+    "switchToDark": "تاریک تھیم منتخب کریں"
   },
   "nav": {
     "map": "نقشہ",
     "myReports": "میری رپورٹس",
     "dashboard": "ڈیش بورڈ",
-    "transparency": "شفافیت",
-    "leaderboard": "لیڈر بورڈ",
     "liveConnected": "براہ راست منسلک",
-    "reconnecting": "دوبارہ رابطہ ہو رہا ہے..."
+    "reconnecting": "دوبارہ رابطہ ہو رہا ہے...",
+    "home": "مرکز",
+    "reports": "رپورٹس",
+    "about": "تعارف",
+    "help": "رہنمائی"
   },
   "map": {
     "filterAll": "تمام",

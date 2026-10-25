@@ -43,7 +43,7 @@ export default function MapView({ issues = [], onMapReady, showHeatmap = false }
       ref={mapRef}
       whenReady={handleMapReady}
       zoomControl={true}
-      style={{ background: '#0f1117' }}
+      style={{ background: 'var(--color-bg-base, #06080d)' }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

@@ -5,15 +5,21 @@ const serializeIssue = require('../utils/serializeIssue')
 const { savePhoto, deletePhoto } = require('../services/photoService')
 const { getBucket } = require('../config/gridfs')
 const { emitIssueEvent } = require('../socket')
+const {
+  sendReportSubmittedEmail,
+  sendReportProcessingEmail,
+  sendReportResolvedEmail
+} = require('../services/emailService')
 
 // GET /api/issues
 const getIssues = asyncHandler(async (req, res) => {
-  const { category, status, search, page = 1, limit = 20 } = req.query
+  const { category, status, search, reporter, page = 1, limit = 20 } = req.query
   const filter = {}
 
   if (category) filter.category = category
   if (status) filter.status = status
   if (search) filter.$text = { $search: search }
+  if (reporter) filter.reportedBy = reporter
 
   const skip = (Number(page) - 1) * Number(limit)
 
@@ -156,11 +162,17 @@ const createIssue = asyncHandler(async (req, res) => {
     throw err
   }
 
-  const populated = await Issue.findById(issue._id).populate('reportedBy', 'name')
+  const populated = await Issue.findById(issue._id).populate('reportedBy', 'name email')
   const serialized = serializeIssue(populated, req.user.id)
 
   const city = address?.split(',').pop()?.trim() || 'islamabad'
   emitIssueEvent(req.io, 'issue:new', serialized, city)
+
+  // Send automatic submission confirmation email asynchronously
+  sendReportSubmittedEmail(populated.reportedBy || req.user, populated).catch(err => {
+    console.error('Failed to send report submission email:', err.message)
+  })
+
   res.status(201).json({ issue: serialized })
 })
 
@@ -172,6 +184,8 @@ const updateStatus = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'Issue not found' })
   }
 
+  const previousStatus = issue.status
+
   // Set resolvedAt only on transition into 'resolved'
   if (status === 'resolved' && issue.status !== 'resolved') {
     issue.resolvedAt = new Date()
@@ -181,11 +195,23 @@ const updateStatus = asyncHandler(async (req, res) => {
   if (assignedDept !== undefined) issue.assignedDept = assignedDept
   await issue.save()
 
-  const populated = await Issue.findById(issue._id).populate('reportedBy', 'name')
+  const populated = await Issue.findById(issue._id).populate('reportedBy', 'name email')
   const serialized = serializeIssue(populated, null)
 
   const city = issue.location?.address?.split(',').pop()?.trim() || 'islamabad'
   emitIssueEvent(req.io, 'issue:updated', serialized, city)
+
+  // Send automatic status change notification emails based on transition
+  if (status === 'in-progress' && previousStatus !== 'in-progress') {
+    sendReportProcessingEmail(populated.reportedBy, populated).catch(err => {
+      console.error('Failed to send processing email:', err.message)
+    })
+  } else if (status === 'resolved' && previousStatus !== 'resolved') {
+    sendReportResolvedEmail(populated.reportedBy, populated).catch(err => {
+      console.error('Failed to send resolved email:', err.message)
+    })
+  }
+
   res.json({ issue: serialized })
 })
 

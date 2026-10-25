@@ -13,16 +13,26 @@
     "login": "Login",
     "register": "Register",
     "logout": "Log out",
-    "anonymous": "Anonymous"
+    "anonymous": "Anonymous",
+    "themeSystem": "System",
+    "themeSystemDesc": "Follow device preference",
+    "themeLight": "Light",
+    "themeLightDesc": "Crisp white theme",
+    "themeDark": "Dark",
+    "themeDarkDesc": "Deep obsidian theme",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
   },
   "nav": {
     "map": "Map",
     "myReports": "My Reports",
     "dashboard": "Dashboard",
-    "transparency": "Transparency",
-    "leaderboard": "Leaderboard",
     "liveConnected": "Live connected",
-    "reconnecting": "Reconnecting..."
+    "reconnecting": "Reconnecting...",
+    "home": "Home",
+    "reports": "Reports",
+    "about": "About",
+    "help": "Help"
   },
   "map": {
     "filterAll": "All",
