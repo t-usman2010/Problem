@@ -9,6 +9,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { SocketProvider } from "@/context/SocketContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import Navbar from "@/components/ui/Navbar";
+import Footer from "@/components/ui/Footer";
 import OfflineBanner from "@/components/ui/OfflineBanner";
 import { LocaleProvider } from "@/context/LocaleContext";
 
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <main id="main-content" className="relative flex-1 z-10">
                     {children}
                   </main>
+                  <Footer />
                 </ToastProvider>
               </SocketProvider>
             </AuthProvider>

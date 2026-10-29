@@ -121,13 +121,6 @@ export default function AboutPage() {
       <div className="relative">
         {/* Header Section */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-gradient-to-r from-[#58a6ff]/15 to-[#39d2c0]/15 border border-[#58a6ff]/30 text-[11px] sm:text-xs font-semibold text-[#58a6ff] uppercase tracking-wider mb-3 sm:mb-4"
-          >
-            <Globe2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('badge')}
-          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}

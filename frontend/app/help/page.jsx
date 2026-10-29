@@ -105,9 +105,6 @@ export default function HelpPage() {
       <div className="relative">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 rounded-full bg-[#58a6ff]/10 border border-[#58a6ff]/20 text-xs font-semibold text-[#58a6ff] uppercase tracking-wider mb-3 sm:mb-4">
-            <HelpCircle className="w-4 h-4" /> {t('badge')}
-          </div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#f0f6fc] tracking-tight mb-2 sm:mb-3">
             {t('title')}
           </h1>

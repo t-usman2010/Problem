@@ -140,7 +140,7 @@ export default function Navbar() {
             <LanguageSwitcher />
             
             {/* Live socket indicator */}
-            <div 
+            {/* <div 
               className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#161b22] border border-[#21262d]"
               title={isConnected ? 'Connected to live city dispatch' : 'Reconnecting...'}
             >
@@ -152,7 +152,7 @@ export default function Navbar() {
               <span className="text-[10px] font-medium text-[#7d8590] uppercase tracking-wider hidden xl:inline">
                 {isConnected ? tNav('liveConnected', { defaultValue: 'Live' }) : tNav('reconnecting', { defaultValue: 'Offline' })}
               </span>
-            </div>
+            </div> */}
             
             {/* Desktop Auth Section */}
             {user ? (

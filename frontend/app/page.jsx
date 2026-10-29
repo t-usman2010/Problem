@@ -101,19 +101,6 @@ export default function HomePage() {
           ═══════════════════════════════════════════ */}
       <section className="relative pt-24 sm:pt-28 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="text-center max-w-4xl mx-auto">
-          {/* Exhibition Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-gradient-to-r from-[#58a6ff]/15 via-[#bc8cff]/15 to-[#39d2c0]/15 border border-[#58a6ff]/30 shadow-sm mb-5 sm:mb-6 max-w-full"
-          >
-            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#58a6ff] animate-pulse shrink-0" />
-            <span className="text-[10px] sm:text-xs font-semibold text-[#f0f6fc] tracking-wide uppercase truncate">
-              {t('badge')}
-            </span>
-          </motion.div>
-
           {/* Main Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -421,31 +408,6 @@ export default function HomePage() {
           <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-[#bc8cff]/10 rounded-full blur-3xl pointer-events-none" />
         </motion.div>
       </section>
-
-      {/* ═══════════════════════════════════════════
-          FOOTER
-          ═══════════════════════════════════════════ */}
-      <footer className="border-t border-[#21262d] py-10 pb-28 md:pb-10 px-4 sm:px-6 lg:px-8 text-center text-xs text-[#7d8590]">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#58a6ff] to-[#bc8cff] flex items-center justify-center text-white text-[10px] font-bold">
-              CR
-            </div>
-            <span className="font-semibold text-[#f0f6fc]">{t('footerPlatform')}</span>
-          </div>
-
-          <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center">
-            <Link href="/" className="hover:text-[#f0f6fc] transition-colors">{tNav('home')}</Link>
-            <Link href="/map" className="hover:text-[#f0f6fc] transition-colors">{tNav('map')}</Link>
-            <Link href="/reports" className="hover:text-[#f0f6fc] transition-colors">{tNav('reports')}</Link>
-            <Link href="/my-reports" className="hover:text-[#f0f6fc] transition-colors">{tNav('myReports')}</Link>
-            <Link href="/about" className="hover:text-[#f0f6fc] transition-colors">{tNav('about')}</Link>
-            <Link href="/help" className="hover:text-[#f0f6fc] transition-colors">{tNav('help')}</Link>
-          </div>
-
-          <p>{t('footerExhibition')}</p>
-        </div>
-      </footer>
     </div>
   )
 }

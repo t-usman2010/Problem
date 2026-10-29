@@ -46,14 +46,14 @@ if errorlevel 1 (
     echo MongoDB is already running.
 )
 
-echo Starting backend...
-start "Civic Issue Reporter - Backend" cmd /k "cd /d ""%BACKEND%"" && npm start"
+echo Starting backend in development mode...
+start "Civic Issue Reporter - Backend" cmd /k "cd /d ""%BACKEND%"" && npm run dev"
 
-echo Starting frontend...
-start "Civic Issue Reporter - Frontend" cmd /k "cd /d ""%FRONTEND%"" && npm start"
+echo Starting frontend in development mode...
+start "Civic Issue Reporter - Frontend" cmd /k "cd /d ""%FRONTEND%"" && npm run dev"
 
 echo.
-echo Project processes have been started.
+echo Project development processes have been started.
 echo Backend:  http://localhost:5000
 echo Frontend: http://localhost:3000
 echo.

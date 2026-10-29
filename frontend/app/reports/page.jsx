@@ -80,9 +80,6 @@ export default function ReportsPage() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-8">
           <div>
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-[#58a6ff]/10 border border-[#58a6ff]/20 text-xs font-semibold text-[#58a6ff] mb-2 sm:mb-3">
-              <Sparkles className="w-3.5 h-3.5" /> {t('badge')}
-            </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#f0f6fc] tracking-tight">
               {t('title')}
             </h1>
