@@ -12,7 +12,7 @@ import FilterBar from '@/components/map/FilterBar'
 import IssueCard from '@/components/issue/IssueCard'
 import EmptyState from '@/components/ui/EmptyState'
 import { MapSkeleton } from '@/components/ui/SkeletonLoader'
-import { Plus, List, Map as MapIcon, Flame, Sparkles } from 'lucide-react'
+import { Plus, List, Map as MapIcon, Flame } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 const MapView = dynamic(() => import('@/components/map/MapView'), {
@@ -61,7 +61,7 @@ export default function MapPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] mt-16">
+    <div className="flex flex-col h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)] mt-16">
       <FilterBar
         activeCategory={category}
         activeStatus={status}
@@ -155,7 +155,7 @@ export default function MapPage() {
          whileTap={{ scale: 0.95 }}
          transition={{ type: 'spring', stiffness: 400, damping: 15 }}
          onClick={handleFABClick}
-         className="fixed bottom-8 end-8 z-[500] h-16 w-16 rounded-2xl btn-gradient text-white shadow-[0_0_30px_rgba(88,166,255,0.3),0_8px_32px_rgba(0,0,0,0.4)] flex items-center justify-center"
+         className="fixed bottom-20 end-4 md:bottom-8 md:end-8 z-[500] h-14 w-14 sm:h-16 sm:w-16 rounded-2xl btn-gradient text-white shadow-[0_0_30px_rgba(88,166,255,0.3),0_8px_32px_rgba(0,0,0,0.4)] flex items-center justify-center"
          aria-label={t('reportNew', { defaultValue: 'Report new issue' })}
        >
          <Plus className="h-7 w-7" strokeWidth={2.5} />

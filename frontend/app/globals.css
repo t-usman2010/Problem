@@ -82,6 +82,26 @@ body {
   color: var(--color-text-main);
   font-family: var(--font-sans), system-ui, sans-serif;
   transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Mobile & Touch utilities */
+.touch-pan-x {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 .layout-skip-link {
@@ -106,6 +126,46 @@ body {
 
 html[dir="rtl"] body {
   font-family: var(--font-urdu), system-ui, sans-serif;
+}
+
+/* ═══════════════════════════════════════════
+   🌐 BILINGUAL RTL & LTR DIRECTION RULES
+   Any sentence or content that cannot be translated into Urdu,
+   or user-generated English text/data, stays aligned to the LEFT.
+   ═══════════════════════════════════════════ */
+html[dir="rtl"] .untranslated,
+html[dir="rtl"] [dir="ltr"],
+html[dir="rtl"] .font-mono,
+html[dir="rtl"] code,
+html[dir="rtl"] input[type="email"],
+html[dir="rtl"] input[type="password"],
+html[dir="rtl"] input[type="url"],
+html[dir="rtl"] input[type="tel"] {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* Automatic plaintext bidi detection:
+   If a sentence/title/description contains Latin/English letters,
+   it automatically renders LTR and aligns to the LEFT.
+   If it contains Urdu/Arabic, it renders RTL and aligns to the right. */
+[dir="auto"],
+.user-content {
+  text-align: start;
+  unicode-bidi: plaintext;
+}
+
+html[dir="rtl"] [dir="auto"] {
+  text-align: start;
+  unicode-bidi: plaintext;
+}
+
+/* Explicit class for any sentence or badge that cannot be translated */
+.text-untranslated,
+.ltr-force {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: isolate !important;
 }
 
 /* ═══════════════════════════════════════════

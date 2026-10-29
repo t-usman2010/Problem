@@ -10,12 +10,14 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Link from 'next/link'
 import { LogIn, MapPin } from 'lucide-react'
+import { useTranslations } from '@/context/LocaleContext'
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const toast = useToast()
   const router = useRouter()
+  const t = useTranslations('auth')
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(loginSchema)
   })
@@ -24,10 +26,10 @@ export default function LoginForm() {
     setLoading(true)
     try {
       await login(data.email, data.password)
-      toast.success('Welcome back!')
+      toast.success(t('loginSuccess', { defaultValue: 'Welcome back!' }))
       router.push('/map')
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed')
+      toast.error(err.response?.data?.message || t('loginFailed', { defaultValue: 'Login failed' }))
     } finally {
       setLoading(false)
     }
@@ -42,32 +44,38 @@ export default function LoginForm() {
             <MapPin className="h-7 w-7 text-white" />
           </div>
         </div>
-        <h1 className="text-2xl font-bold text-[#f0f6fc]">Welcome Back</h1>
-        <p className="text-sm text-[#7d8590] mt-2">Sign in to report civic issues</p>
+        <h1 className="text-2xl font-bold text-[#f0f6fc]">{t('loginTitle')}</h1>
+        <p className="text-sm text-[#7d8590] mt-2">{t('loginSubtitle')}</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Input
-          label="Email"
+          label={t('email')}
           type="email"
           placeholder="you@example.com"
+          dir="ltr"
+          className="text-start untranslated"
           error={errors.email?.message}
           {...register('email')}
         />
         <Input
-          label="Password"
+          label={t('password')}
           type="password"
           placeholder="••••••••"
+          dir="ltr"
+          className="text-start untranslated"
           error={errors.password?.message}
           {...register('password')}
         />
         <Button type="submit" className="w-full" loading={loading}>
           <LogIn className="h-4 w-4" />
-          Sign In
+          {t('loginButton')}
         </Button>
       </form>
       <p className="text-sm text-[#7d8590] text-center mt-8">
-        Don&apos;t have an account?{' '}
-        <Link href="/register" className="text-[#58a6ff] hover:text-[#79b8ff] transition-colors font-medium">Register</Link>
+        {t('noAccount')}{' '}
+        <Link href="/register" className="text-[#58a6ff] hover:text-[#79b8ff] transition-colors font-medium">
+          {t('signUp')}
+        </Link>
       </p>
     </div>
   )

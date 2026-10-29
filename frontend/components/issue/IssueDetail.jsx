@@ -8,21 +8,21 @@ import api from '@/lib/api'
 import StatusBadge from './StatusBadge'
 import CategoryIcon from './CategoryIcon'
 import Button from '@/components/ui/Button'
-import { Heart, MapPin, Calendar, User, Send, Building2, MessageCircle } from 'lucide-react'
+import { Heart, MapPin, Calendar, User, Send, MessageCircle } from 'lucide-react'
 
 const MiniMap = dynamic(() => import('@/components/map/MiniMap'), { ssr: false })
 
-function timeAgo(dateString) {
+function formatTimeAgo(dateString, tTime) {
   const now = new Date()
   const date = new Date(dateString)
   const seconds = Math.floor((now - date) / 1000)
-  if (seconds < 60) return 'just now'
+  if (seconds < 60) return tTime ? tTime('justNow') : 'just now'
   const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
+  if (minutes < 60) return tTime ? tTime('minutesAgo', { count: minutes }) : `${minutes}m ago`
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return tTime ? tTime('hoursAgo', { count: hours }) : `${hours}h ago`
   const days = Math.floor(hours / 24)
-  if (days < 30) return `${days}d ago`
+  if (days < 30) return tTime ? tTime('daysAgo', { count: days }) : `${days}d ago`
   return date.toLocaleDateString()
 }
 
@@ -32,6 +32,8 @@ export default function IssueDetail({ issue: initialIssue }) {
   const { user, isAdmin } = useAuth()
   const toast = useToast()
   const t = useTranslations('issue')
+  const tTime = useTranslations('time')
+  const tStatuses = useTranslations('statuses')
 
   const checkHasUpvoted = useCallback((currentIssue, currentUser) => {
     if (!currentIssue) return false
@@ -52,6 +54,30 @@ export default function IssueDetail({ issue: initialIssue }) {
     setIssue(nextIssue)
     setHasUpvoted(checkHasUpvoted(nextIssue, user))
   }, [initialIssue, user, checkHasUpvoted])
+
+  useEffect(() => {
+    if (!normalizedInitial?._id) return
+
+    let active = true
+    api.get(`/issues/${normalizedInitial._id}/comments`)
+      .then((res) => {
+        if (!active) return
+        const comments = (res.data.comments || []).map(item => ({
+          ...item,
+          _id: item._id || item.id
+        }))
+        setIssue(prev => ({ ...prev, comments }))
+      })
+      .catch(() => {
+        if (active) {
+          toast.error(t('commentsFailed', { defaultValue: 'Failed to load comments' }))
+        }
+      })
+
+    return () => {
+      active = false
+    }
+  }, [normalizedInitial?._id, t, toast])
 
   const [comment, setComment] = useState('')
   const [submittingComment, setSubmittingComment] = useState(false)
@@ -74,12 +100,21 @@ export default function IssueDetail({ issue: initialIssue }) {
       ...prev,
       upvotes: nextCount,
       upvoteCount: nextCount,
-      hasUpvoted: !hasUpvoted
+      hasUpvoted: !prevHasUpvoted
     }))
-    setHasUpvoted(!hasUpvoted)
+    setHasUpvoted(!prevHasUpvoted)
 
     try {
-      await api.post(`/issues/${issue._id || issue.id}/upvote`)
+      const res = await api.post(`/issues/${issue._id}/upvote`)
+      const updatedCount = res.data?.upvotes ?? res.data?.issue?.upvotes ?? nextCount
+      const updatedHasUpvoted = res.data?.hasUpvoted ?? !prevHasUpvoted
+      setIssue(prev => ({
+        ...prev,
+        upvotes: updatedCount,
+        upvoteCount: updatedCount,
+        hasUpvoted: updatedHasUpvoted
+      }))
+      setHasUpvoted(updatedHasUpvoted)
     } catch {
       setIssue(prev => ({
         ...prev,
@@ -88,29 +123,38 @@ export default function IssueDetail({ issue: initialIssue }) {
         hasUpvoted: prevHasUpvoted
       }))
       setHasUpvoted(prevHasUpvoted)
-      toast.error(t('upvoteFailed', { defaultValue: 'Failed to upvote' }))
+      toast.error(t('upvoteFailed', { defaultValue: 'Failed to update upvote' }))
     }
   }
 
-  // Add comment
+  // Comment submission
   const handleComment = async (e) => {
     e.preventDefault()
     if (!comment.trim()) return
-    setSubmittingComment(true)
+
     const tempComment = {
       _id: `temp-${Date.now()}`,
       text: comment,
-      user: { name: user?.name || 'You' },
+      user: { name: user.name },
       createdAt: new Date().toISOString()
     }
-    setIssue(prev => ({ ...prev, comments: [...(prev.comments || []), tempComment] }))
+    setIssue(prev => ({
+      ...prev,
+      comments: [...(prev.comments || []), tempComment]
+    }))
+    const commentText = comment
     setComment('')
+    setSubmittingComment(true)
 
     try {
-      const res = await api.post(`/issues/${issue._id}/comments`, { text: comment })
+      const res = await api.post(`/issues/${issue._id}/comments`, { text: commentText })
+      const createdComment = res.data?.comment || {
+        ...tempComment,
+        _id: res.data?._id || tempComment._id
+      }
       setIssue(prev => ({
         ...prev,
-        comments: prev.comments.map(c => c._id === tempComment._id ? res.data : c)
+        comments: (prev.comments || []).map(c => c._id === tempComment._id ? createdComment : c)
       }))
     } catch {
       setIssue(prev => ({
@@ -166,24 +210,30 @@ export default function IssueDetail({ issue: initialIssue }) {
       )}
 
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-3">
-          <div className="flex items-center gap-2.5">
+      <div className="flex items-start justify-between gap-3 sm:gap-4">
+        <div className="space-y-2 sm:space-y-3 min-w-0 flex-1">
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
             <CategoryIcon category={issue.category} showLabel />
             <StatusBadge status={issue.status} />
           </div>
-          <h1 className="text-2xl font-bold text-[#f0f6fc] leading-tight">{issue.title}</h1>
+          {/* Title: dir="auto" ensures English sentences are ALWAYS aligned to the left */}
+          <h1
+            dir="auto"
+            className="text-xl sm:text-2xl font-bold text-[#f0f6fc] leading-tight break-words text-start [unicode-bidi:plaintext] user-content"
+          >
+            {issue.title}
+          </h1>
         </div>
         <button
           onClick={handleUpvote}
-          className={`flex flex-col items-center gap-1 rounded-2xl p-3 transition-all duration-200 ${
+          className={`flex flex-col items-center gap-1 rounded-2xl p-2.5 sm:p-3 shrink-0 transition-all duration-200 ${
             hasUpvoted
               ? 'text-[#f85149] bg-[#f85149]/10 border border-[#f85149]/20 shadow-[0_0_20px_rgba(248,81,73,0.1)]'
               : 'text-[#7d8590] bg-[#161b22] border border-[#21262d] hover:text-[#f85149] hover:bg-[#f85149]/10 hover:border-[#f85149]/20'
           }`}
           aria-label={hasUpvoted ? t('removeUpvote', { defaultValue: 'Remove upvote' }) : t('upvote', { defaultValue: 'Upvote this issue' })}
         >
-          <Heart className="h-6 w-6" fill={hasUpvoted ? 'currentColor' : 'none'} />
+          <Heart className="h-5 w-5 sm:h-6 sm:w-6" fill={hasUpvoted ? 'currentColor' : 'none'} />
           <span className="text-xs font-bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
             {typeof issue.upvotes === 'number' ? issue.upvotes : (issue.upvoteCount ?? (Array.isArray(issue.upvotes) ? issue.upvotes.length : 0))}
           </span>
@@ -192,68 +242,73 @@ export default function IssueDetail({ issue: initialIssue }) {
 
       {/* Description */}
       {issue.description && (
-        <div className="rounded-2xl bg-[#0d1117] border border-[#21262d] p-5">
-          <p className="text-sm text-[#7d8590] leading-relaxed">{issue.description}</p>
+        <div className="rounded-2xl bg-[#0d1117] border border-[#21262d] p-4 sm:p-5">
+          <p
+            dir="auto"
+            className="text-xs sm:text-sm text-[#7d8590] leading-relaxed text-start [unicode-bidi:plaintext] user-content"
+          >
+            {issue.description}
+          </p>
         </div>
       )}
 
       {/* Mini-map */}
       {issueLat != null && issueLng != null && (
-        <div className="rounded-2xl overflow-hidden border border-[#21262d]">
+        <div className="rounded-2xl overflow-hidden border border-[#21262d] h-[220px] sm:h-[260px]">
           <MiniMap lat={issueLat} lng={issueLng} />
         </div>
       )}
 
       {/* Meta */}
-      <div className="flex flex-wrap items-center gap-3 text-sm text-[#7d8590] pb-6 border-b border-[#21262d]">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-[#7d8590] pb-6 border-b border-[#21262d]">
         {issue.address && (
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#161b22] border border-[#21262d]">
-            <MapPin className="h-3.5 w-3.5 text-[#58a6ff]" />
-            {issue.address}
+          <span
+            dir="auto"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#161b22] border border-[#21262d] truncate max-w-full text-start [unicode-bidi:plaintext] user-content"
+          >
+            <MapPin className="h-3.5 w-3.5 text-[#58a6ff] shrink-0" />
+            <span className="truncate">{issue.address}</span>
           </span>
         )}
-        <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#161b22] border border-[#21262d]">
-          <User className="h-3.5 w-3.5 text-[#bc8cff]" />
-          {issue.reporter?.name || 'Anonymous'}
+        <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#161b22] border border-[#21262d] shrink-0">
+          <Calendar className="h-3.5 w-3.5 text-[#bc8cff] shrink-0" />
+          {formatTimeAgo(issue.createdAt, tTime)}
         </span>
-        <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#161b22] border border-[#21262d]">
-          <Calendar className="h-3.5 w-3.5 text-[#39d2c0]" />
-          {timeAgo(issue.createdAt)}
+        <span
+          dir="auto"
+          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#161b22] border border-[#21262d] truncate max-w-[200px] text-start [unicode-bidi:plaintext] user-content"
+        >
+          <User className="h-3.5 w-3.5 text-[#39d2c0] shrink-0" />
+          <span className="truncate">{issue.reportedBy?.name || t('anonymous', { defaultValue: 'Anonymous' })}</span>
         </span>
-        {issue.assignedDept && (
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#58a6ff]/10 border border-[#58a6ff]/20 text-[#58a6ff]">
-            <Building2 className="h-3.5 w-3.5" />
-            {issue.assignedDept}
-          </span>
-        )}
       </div>
 
       {/* Admin controls */}
       {isAdmin && (
-        <div className="p-5 rounded-2xl border border-[#bc8cff]/20 bg-[#bc8cff]/5">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="rounded-2xl border border-[#bc8cff]/30 bg-[#bc8cff]/5 p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3 sm:mb-4">
             <div className="h-1.5 w-1.5 rounded-full bg-[#bc8cff]" />
-            <h3 className="text-sm font-bold text-[#f0f6fc]">Admin Controls</h3>
+            <h3 className="text-xs sm:text-sm font-bold text-[#f0f6fc]">Admin Controls</h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex items-center gap-2">
-              <label className="text-sm text-[#7d8590] shrink-0">Status:</label>
+              <label className="text-xs sm:text-sm text-[#7d8590] shrink-0">Status:</label>
               <select
                 value={issue.status}
                 onChange={(e) => handleStatusUpdate(e.target.value)}
-                className="flex-1 rounded-xl border border-[#21262d] bg-[#0d1117] px-3 py-2 text-sm text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none transition-colors"
+                className="flex-1 rounded-xl border border-[#21262d] bg-[#0d1117] px-3 py-2 text-xs sm:text-sm text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none transition-colors"
               >
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="resolved">Resolved</option>
+                <option value="pending">{tStatuses('pending', { defaultValue: 'Pending' })}</option>
+                <option value="in-progress">{tStatuses('inProgress', { defaultValue: 'In Progress' })}</option>
+                <option value="resolved">{tStatuses('resolved', { defaultValue: 'Resolved' })}</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <label className="text-sm text-[#7d8590] shrink-0">Dept:</label>
+              <label className="text-xs sm:text-sm text-[#7d8590] shrink-0">Dept:</label>
               <select
                 value={issue.assignedDept || ''}
                 onChange={(e) => handleDeptUpdate(e.target.value || null)}
-                className="flex-1 rounded-xl border border-[#21262d] bg-[#0d1117] px-3 py-2 text-sm text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none transition-colors"
+                className="flex-1 rounded-xl border border-[#21262d] bg-[#0d1117] px-3 py-2 text-xs sm:text-sm text-[#f0f6fc] focus:border-[#58a6ff] focus:outline-none transition-colors"
               >
                 <option value="">Unassigned</option>
                 <option value="Roads & Infrastructure">Roads & Infrastructure</option>
@@ -269,7 +324,7 @@ export default function IssueDetail({ issue: initialIssue }) {
 
       {/* Comments */}
       <div>
-        <div className="flex items-center gap-2 mb-5">
+        <div className="flex items-center gap-2 mb-4 sm:mb-5">
           <MessageCircle className="h-4 w-4 text-[#58a6ff]" />
           <h3 className="text-sm font-bold text-[#f0f6fc]">
             {t('comments', { defaultValue: 'Comments' })}
@@ -281,21 +336,31 @@ export default function IssueDetail({ issue: initialIssue }) {
 
         <div className="space-y-3 mb-5">
           {(issue.comments || []).map((c) => (
-            <div key={c._id} className="rounded-2xl bg-[#0d1117] border border-[#21262d] p-4 hover:border-[#30363d] transition-colors">
+            <div key={c._id} className="rounded-2xl bg-[#0d1117] border border-[#21262d] p-3.5 sm:p-4 hover:border-[#30363d] transition-colors">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#58a6ff] to-[#39d2c0] flex items-center justify-center">
+                  <div className="h-6 w-6 rounded-full bg-gradient-to-br from-[#58a6ff] to-[#39d2c0] flex items-center justify-center shrink-0">
                     <span className="text-[10px] font-bold text-white">{(c.user?.name || 'A').charAt(0).toUpperCase()}</span>
                   </div>
-                  <span className="text-sm font-semibold text-[#f0f6fc]">{c.user?.name || 'Anonymous'}</span>
+                  <span
+                    dir="auto"
+                    className="text-xs sm:text-sm font-semibold text-[#f0f6fc] truncate text-start [unicode-bidi:plaintext] user-content"
+                  >
+                    {c.user?.name || t('anonymous', { defaultValue: 'Anonymous' })}
+                  </span>
                 </div>
-                <span className="text-xs text-[#484f58]">{timeAgo(c.createdAt)}</span>
+                <span className="text-[11px] sm:text-xs text-[#484f58] shrink-0">{formatTimeAgo(c.createdAt, tTime)}</span>
               </div>
-              <p className="text-sm text-[#7d8590] ps-8">{c.text}</p>
+              <p
+                dir="auto"
+                className="text-xs sm:text-sm text-[#7d8590] ps-8 leading-relaxed break-words text-start [unicode-bidi:plaintext] user-content"
+              >
+                {c.text}
+              </p>
             </div>
           ))}
           {(!issue.comments || issue.comments.length === 0) && (
-            <p className="text-sm text-[#484f58] text-center py-8">{t('noComments', { defaultValue: 'No comments yet. Be the first to comment.' })}</p>
+            <p className="text-xs sm:text-sm text-[#484f58] text-center py-8">{t('noComments', { defaultValue: 'No comments yet. Be the first to comment.' })}</p>
           )}
         </div>
 
@@ -305,10 +370,10 @@ export default function IssueDetail({ issue: initialIssue }) {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder={t('writeComment', { defaultValue: 'Write a comment...' })}
-              className="flex-1 rounded-xl border border-[#21262d] bg-[#0d1117] px-4 py-3 text-sm text-[#f0f6fc] placeholder-[#484f58] input-glow focus:border-[#58a6ff]/50 focus:outline-none transition-all"
+              className="flex-1 min-w-0 rounded-xl border border-[#21262d] bg-[#0d1117] px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm text-[#f0f6fc] placeholder-[#484f58] input-glow focus:border-[#58a6ff]/50 focus:outline-none transition-all"
             />
-            <Button type="submit" size="md" loading={submittingComment} disabled={!comment.trim()}>
-              <Send className="h-4 w-4" />
+            <Button type="submit" size="md" loading={submittingComment} disabled={!comment.trim()} className="shrink-0">
+              <Send className="h-4 w-4 rtl:rotate-180" />
             </Button>
           </form>
         )}

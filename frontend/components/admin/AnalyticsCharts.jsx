@@ -47,10 +47,10 @@ const getStatusFill = (key) => {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[#0d1117] border border-[#21262d] p-4 rounded-xl shadow-2xl backdrop-blur-xl">
-        <p className="text-[#f0f6fc] font-semibold mb-1.5 text-sm">{label}</p>
+      <div className="bg-[#0d1117] border border-[#21262d] p-3 sm:p-4 rounded-xl shadow-2xl backdrop-blur-xl">
+        <p className="text-[#f0f6fc] font-semibold mb-1 text-xs sm:text-sm">{label}</p>
         {payload.map((entry, index) => (
-          <p key={index} className="text-xs font-medium" style={{ color: entry.color || entry.fill || '#58a6ff' }}>
+          <p key={index} className="text-[11px] sm:text-xs font-medium" style={{ color: entry.color || entry.fill || '#58a6ff' }}>
             {entry.name || 'Count'}: <span className="font-bold">{entry.value}</span>
           </p>
         ))}
@@ -157,35 +157,35 @@ export default function AnalyticsCharts({ issues = [] }) {
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card p-7 mb-8"
+      className="glass-card p-4 sm:p-7 mb-8 overflow-hidden"
     >
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-2 rounded-xl bg-[#58a6ff]/10">
+      <div className="flex items-center gap-2.5 sm:gap-3 mb-6 sm:mb-8">
+        <div className="p-2 rounded-xl bg-[#58a6ff]/10 shrink-0">
           <BarChart3 className="text-[#58a6ff]" size={20} />
         </div>
-        <h2 className="text-lg font-bold text-[#f0f6fc]">Analytics Overview</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[#f0f6fc]">Analytics Overview</h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
         {/* Category Bar Chart */}
-        <div className="h-[300px] flex flex-col">
-          <h3 className="text-xs font-semibold text-[#7d8590] mb-4 text-center uppercase tracking-wider">Issues by Category</h3>
-          <div className="flex-1">
+        <div className="h-[280px] sm:h-[300px] flex flex-col">
+          <h3 className="text-xs font-semibold text-[#7d8590] mb-3 sm:mb-4 text-center uppercase tracking-wider">Issues by Category</h3>
+          <div className="flex-1 w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={categoryData} margin={{ top: 5, right: 30, left: 0, bottom: 25 }}>
+              <BarChart data={categoryData} margin={{ top: 5, right: 15, left: -20, bottom: 25 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#21262d" vertical={false} />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fill: '#7d8590', fontSize: 11 }} 
+                  tick={{ fill: '#7d8590', fontSize: 10 }} 
                   axisLine={{ stroke: '#21262d' }}
                   tickLine={{ stroke: '#21262d' }}
                   interval={0}
                   angle={-45}
                   textAnchor="end"
-                  height={60}
+                  height={55}
                 />
                 <YAxis 
-                  tick={{ fill: '#7d8590', fontSize: 11 }} 
+                  tick={{ fill: '#7d8590', fontSize: 10 }} 
                   axisLine={{ stroke: '#21262d' }}
                   tickLine={{ stroke: '#21262d' }}
                   allowDecimals={false}
@@ -202,17 +202,17 @@ export default function AnalyticsCharts({ issues = [] }) {
         </div>
 
         {/* Status Pie Chart */}
-        <div className="h-[300px] flex flex-col">
-          <h3 className="text-xs font-semibold text-[#7d8590] mb-4 text-center uppercase tracking-wider">Issues by Status</h3>
-          <div className="flex-1 relative">
+        <div className="h-[280px] sm:h-[300px] flex flex-col">
+          <h3 className="text-xs font-semibold text-[#7d8590] mb-3 sm:mb-4 text-center uppercase tracking-wider">Issues by Status</h3>
+          <div className="flex-1 relative w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={statusData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={90}
+                  innerRadius={50}
+                  outerRadius={80}
                   paddingAngle={5}
                   dataKey="value"
                   stroke="none"
@@ -232,7 +232,7 @@ export default function AnalyticsCharts({ issues = [] }) {
             
             {/* Center Text */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-[36px]">
-              <span className="text-3xl font-black text-[#f0f6fc]">{totalIssues}</span>
+              <span className="text-2xl sm:text-3xl font-black text-[#f0f6fc]">{totalIssues}</span>
               <span className="text-[10px] text-[#7d8590] uppercase tracking-wider font-semibold">Total</span>
             </div>
           </div>
@@ -240,25 +240,25 @@ export default function AnalyticsCharts({ issues = [] }) {
       </div>
 
       {/* Second Row: Issues Over Time & Department Resolution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-8 border-t border-[#21262d]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 pt-6 sm:pt-8 border-t border-[#21262d]">
         {/* Issues Over Time Line Chart */}
-        <div className="h-[300px] flex flex-col">
-          <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="h-[280px] sm:h-[300px] flex flex-col">
+          <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
             <TrendingUp className="h-3.5 w-3.5 text-[#58a6ff]" />
             <h3 className="text-xs font-semibold text-[#7d8590] uppercase tracking-wider">Issues Reported Over Time</h3>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={timeData} margin={{ top: 10, right: 30, left: 0, bottom: 25 }}>
+              <LineChart data={timeData} margin={{ top: 10, right: 15, left: -20, bottom: 25 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#21262d" vertical={false} />
                 <XAxis 
                   dataKey="date" 
-                  tick={{ fill: '#7d8590', fontSize: 11 }} 
+                  tick={{ fill: '#7d8590', fontSize: 10 }} 
                   axisLine={{ stroke: '#21262d' }}
                   tickLine={{ stroke: '#21262d' }}
                 />
                 <YAxis 
-                  tick={{ fill: '#7d8590', fontSize: 11 }} 
+                  tick={{ fill: '#7d8590', fontSize: 10 }} 
                   axisLine={{ stroke: '#21262d' }}
                   tickLine={{ stroke: '#21262d' }}
                   allowDecimals={false}
@@ -270,8 +270,8 @@ export default function AnalyticsCharts({ issues = [] }) {
                   name="Reports" 
                   stroke="#58a6ff" 
                   strokeWidth={2.5} 
-                  dot={{ fill: '#58a6ff', r: 4, strokeWidth: 0 }} 
-                  activeDot={{ r: 6, strokeWidth: 2, stroke: '#58a6ff', fill: '#0d1117' }} 
+                  dot={{ fill: '#58a6ff', r: 3.5, strokeWidth: 0 }} 
+                  activeDot={{ r: 5, strokeWidth: 2, stroke: '#58a6ff', fill: '#0d1117' }} 
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -279,27 +279,27 @@ export default function AnalyticsCharts({ issues = [] }) {
         </div>
 
         {/* Department Resolution Times Bar Chart */}
-        <div className="h-[300px] flex flex-col">
-          <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="h-[280px] sm:h-[300px] flex flex-col">
+          <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
             <Clock className="h-3.5 w-3.5 text-[#3fb950]" />
             <h3 className="text-xs font-semibold text-[#7d8590] uppercase tracking-wider">Dept Resolution (Avg Hours)</h3>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={deptData} margin={{ top: 10, right: 30, left: 0, bottom: 25 }}>
+              <BarChart data={deptData} margin={{ top: 10, right: 15, left: -20, bottom: 25 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#21262d" vertical={false} />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fill: '#7d8590', fontSize: 10 }} 
+                  tick={{ fill: '#7d8590', fontSize: 9.5 }} 
                   axisLine={{ stroke: '#21262d' }}
                   tickLine={{ stroke: '#21262d' }}
                   interval={0}
                   angle={-25}
                   textAnchor="end"
-                  height={50}
+                  height={45}
                 />
                 <YAxis 
-                  tick={{ fill: '#7d8590', fontSize: 11 }} 
+                  tick={{ fill: '#7d8590', fontSize: 10 }} 
                   axisLine={{ stroke: '#21262d' }}
                   tickLine={{ stroke: '#21262d' }}
                 />

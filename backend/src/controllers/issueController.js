@@ -168,8 +168,8 @@ const createIssue = asyncHandler(async (req, res) => {
   const city = address?.split(',').pop()?.trim() || 'islamabad'
   emitIssueEvent(req.io, 'issue:new', serialized, city)
 
-  // Send automatic submission confirmation email asynchronously
-  sendReportSubmittedEmail(populated.reportedBy || req.user, populated).catch(err => {
+  // Wait for delivery so serverless runtimes do not terminate before sending
+  await sendReportSubmittedEmail(populated.reportedBy || req.user, populated).catch(err => {
     console.error('Failed to send report submission email:', err.message)
   })
 
@@ -203,11 +203,11 @@ const updateStatus = asyncHandler(async (req, res) => {
 
   // Send automatic status change notification emails based on transition
   if (status === 'in-progress' && previousStatus !== 'in-progress') {
-    sendReportProcessingEmail(populated.reportedBy, populated).catch(err => {
+    await sendReportProcessingEmail(populated.reportedBy, populated).catch(err => {
       console.error('Failed to send processing email:', err.message)
     })
   } else if (status === 'resolved' && previousStatus !== 'resolved') {
-    sendReportResolvedEmail(populated.reportedBy, populated).catch(err => {
+    await sendReportResolvedEmail(populated.reportedBy, populated).catch(err => {
       console.error('Failed to send resolved email:', err.message)
     })
   }

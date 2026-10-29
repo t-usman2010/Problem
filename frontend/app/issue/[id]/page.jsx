@@ -39,7 +39,7 @@ export default function IssueDetailPage() {
   )
 
   return (
-    <div className="relative min-h-[calc(100vh-64px)] mt-16 px-4 py-10">
+    <div className="relative min-h-[calc(100vh-64px)] mt-16 px-3 sm:px-4 py-6 sm:py-10 pb-28 md:pb-12">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-1/4 w-80 h-80 bg-[#58a6ff]/3 rounded-full blur-3xl" />
       </div>

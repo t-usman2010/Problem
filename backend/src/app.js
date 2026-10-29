@@ -6,6 +6,7 @@ const morgan = require('morgan')
 const { sanitize: mongoSanitize } = require('express-mongo-sanitize')
 const { generalLimiter } = require('./middleware/rateLimit')
 const errorHandler = require('./middleware/errorHandler')
+const corsOptions = require('./config/cors')
 
 // Route imports
 const authRoutes = require('./routes/auth')
@@ -17,10 +18,7 @@ const app = express()
 
 // Security & utility middleware
 app.use(helmet())
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true
-}))
+app.use(cors(corsOptions))
 app.use(compression())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

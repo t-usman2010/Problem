@@ -137,15 +137,15 @@ export default function ReportForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto space-y-8">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto space-y-6 sm:space-y-8">
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#58a6ff]/20 to-[#bc8cff]/20 border border-[#58a6ff]/10">
+          <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-[#58a6ff]/20 to-[#bc8cff]/20 border border-[#58a6ff]/10 shrink-0">
             <Sparkles className="h-5 w-5 text-[#58a6ff]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#f0f6fc]">{t('title', { defaultValue: 'Report an Issue' })}</h1>
-            <p className="text-sm text-[#7d8590]">Help improve your community by reporting civic problems</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#f0f6fc]">{t('title', { defaultValue: 'Report an Issue' })}</h1>
+            <p className="text-xs sm:text-sm text-[#7d8590]">Help improve your community by reporting civic problems</p>
           </div>
         </div>
       </div>
@@ -178,20 +178,20 @@ export default function ReportForm() {
           name="category"
           control={control}
           render={({ field }) => (
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-2.5">
               {CATEGORIES.map(cat => (
                 <button
                   key={cat.value}
                   type="button"
                   onClick={() => field.onChange(cat.value)}
-                  className={`flex flex-col items-center gap-2 rounded-2xl p-4 border transition-all duration-200 ${
+                  className={`flex flex-col items-center gap-1.5 sm:gap-2 rounded-2xl p-2.5 sm:p-4 border transition-all duration-200 ${
                     field.value === cat.value
                       ? 'border-[#58a6ff]/40 bg-[#58a6ff]/10 shadow-[0_0_20px_rgba(88,166,255,0.1)]'
                       : 'border-[#21262d] bg-[#0d1117] hover:border-[#30363d] hover:bg-[#161b22]'
                   }`}
                 >
                   <CategoryIcon category={cat.value} size="md" />
-                  <span className="text-xs font-medium text-[#f0f6fc]">{cat.label}</span>
+                  <span className="text-xs font-medium text-[#f0f6fc] text-center">{cat.label}</span>
                 </button>
               ))}
             </div>
@@ -205,7 +205,7 @@ export default function ReportForm() {
       {/* Location */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-[#f0f6fc]">{t('location', { defaultValue: 'Location' })}</label>
-        <div className="rounded-2xl border border-[#21262d] overflow-hidden" style={{ height: '300px' }}>
+        <div className="rounded-2xl border border-[#21262d] overflow-hidden h-[240px] sm:h-[300px]">
           <LocationPicker
             onLocationSelect={handleLocationSelect}
             initialLat={latitude}
@@ -253,13 +253,13 @@ export default function ReportForm() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full rounded-2xl border-2 border-dashed border-[#21262d] bg-[#0d1117] p-10 text-center hover:border-[#58a6ff]/30 hover:bg-[#58a6ff]/5 transition-all duration-200 group"
+            className="w-full rounded-2xl border-2 border-dashed border-[#21262d] bg-[#0d1117] p-6 sm:p-10 text-center hover:border-[#58a6ff]/30 hover:bg-[#58a6ff]/5 transition-all duration-200 group"
           >
             <div className="p-3 rounded-2xl bg-[#161b22] border border-[#21262d] w-fit mx-auto mb-3 group-hover:border-[#58a6ff]/20 transition-colors">
-              <ImageIcon className="h-8 w-8 text-[#7d8590] group-hover:text-[#58a6ff] transition-colors" />
+              <ImageIcon className="h-7 w-7 sm:h-8 sm:w-8 text-[#7d8590] group-hover:text-[#58a6ff] transition-colors" />
             </div>
-            <span className="text-sm text-[#7d8590] font-medium">{t('uploadPhoto', { defaultValue: 'Click to upload a photo' })}</span>
-            <span className="block text-xs text-[#484f58] mt-1">{t('photoFormats', { defaultValue: 'JPEG, PNG, WebP up to 50MB' })}</span>
+            <span className="text-xs sm:text-sm text-[#7d8590] font-medium">{t('uploadPhoto', { defaultValue: 'Click to upload a photo' })}</span>
+            <span className="block text-[11px] sm:text-xs text-[#484f58] mt-1">{t('photoFormats', { defaultValue: 'JPEG, PNG, WebP up to 50MB' })}</span>
           </button>
         )}
         <input
