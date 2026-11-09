@@ -8,7 +8,9 @@ const { emitIssueEvent } = require('../socket')
 const {
   sendReportSubmittedEmail,
   sendReportProcessingEmail,
-  sendReportResolvedEmail
+  sendReportResolvedEmail,
+  sendResolutionConfirmedEmail,
+  sendResolutionRejectedEmail
 } = require('../services/emailService')
 
 // GET /api/issues
@@ -117,7 +119,11 @@ const getIssuePhoto = asyncHandler(async (req, res) => {
   }
 
   res.set('Content-Type', issue.photoContentType || files[0].contentType || 'application/octet-stream')
-  res.set('Cache-Control', 'public, max-age=31536000, immutable')
+  const cacheControl = process.env.NODE_ENV === 'production'
+    ? 'public, max-age=86400'
+    : 'no-cache, no-store, must-revalidate'
+  res.set('Cache-Control', cacheControl)
+  res.set('Cross-Origin-Resource-Policy', 'cross-origin')
 
   const stream = bucket.openDownloadStream(issue.photoId)
   stream.on('error', () => {
@@ -186,12 +192,10 @@ const updateStatus = asyncHandler(async (req, res) => {
 
   const previousStatus = issue.status
 
-  // Set resolvedAt only on transition into 'resolved'
-  if (status === 'resolved' && issue.status !== 'resolved') {
-    issue.resolvedAt = new Date()
-  }
+  // When admin sets status to 'resolved', intercept and set to 'awaiting-confirmation' instead
+  const effectiveStatus = status === 'resolved' ? 'awaiting-confirmation' : status
 
-  issue.status = status
+  issue.status = effectiveStatus
   if (assignedDept !== undefined) issue.assignedDept = assignedDept
   await issue.save()
 
@@ -202,13 +206,13 @@ const updateStatus = asyncHandler(async (req, res) => {
   emitIssueEvent(req.io, 'issue:updated', serialized, city)
 
   // Send automatic status change notification emails based on transition
-  if (status === 'in-progress' && previousStatus !== 'in-progress') {
+  if (effectiveStatus === 'in-progress' && previousStatus !== 'in-progress') {
     await sendReportProcessingEmail(populated.reportedBy, populated).catch(err => {
       console.error('Failed to send processing email:', err.message)
     })
-  } else if (status === 'resolved' && previousStatus !== 'resolved') {
+  } else if (effectiveStatus === 'awaiting-confirmation' && previousStatus !== 'awaiting-confirmation') {
     await sendReportResolvedEmail(populated.reportedBy, populated).catch(err => {
-      console.error('Failed to send resolved email:', err.message)
+      console.error('Failed to send resolution confirmation email:', err.message)
     })
   }
 
@@ -243,6 +247,49 @@ const toggleUpvote = asyncHandler(async (req, res) => {
   res.json({ upvoteCount, hasUpvoted })
 })
 
+// PATCH /api/issues/:id/confirm-resolution
+const confirmResolution = asyncHandler(async (req, res) => {
+  const { confirmed } = req.body
+  const issue = await Issue.findById(req.params.id)
+  if (!issue) return res.status(404).json({ message: 'Issue not found' })
+
+  // Only the reporter can confirm, and only if awaiting-confirmation
+  if (issue.reportedBy.toString() !== req.user.id) {
+    return res.status(403).json({ message: 'Only the reporter can confirm resolution' })
+  }
+  if (issue.status !== 'awaiting-confirmation') {
+    return res.status(400).json({ message: 'Issue is not awaiting confirmation' })
+  }
+
+  if (confirmed) {
+    issue.status = 'resolved'
+    issue.resolvedAt = new Date()
+  } else {
+    issue.status = 'pending'
+    issue.resolvedAt = null
+  }
+  await issue.save()
+
+  const populated = await Issue.findById(issue._id).populate('reportedBy', 'name email')
+  const serialized = serializeIssue(populated, req.user.id)
+
+  const city = issue.location?.address?.split(',').pop()?.trim() || 'islamabad'
+  emitIssueEvent(req.io, 'issue:updated', serialized, city)
+
+  // Send appropriate notification email
+  if (confirmed) {
+    await sendResolutionConfirmedEmail(populated.reportedBy, populated).catch(err => {
+      console.error('Failed to send resolution confirmed email:', err.message)
+    })
+  } else {
+    await sendResolutionRejectedEmail(populated.reportedBy, populated).catch(err => {
+      console.error('Failed to send resolution rejected email:', err.message)
+    })
+  }
+
+  res.json({ issue: serialized })
+})
+
 // DELETE /api/issues/:id
 const deleteIssue = asyncHandler(async (req, res) => {
   const issue = await Issue.findById(req.params.id)
@@ -267,6 +314,7 @@ module.exports = {
   getIssuePhoto,
   createIssue,
   updateStatus,
+  confirmResolution,
   toggleUpvote,
   deleteIssue
 }

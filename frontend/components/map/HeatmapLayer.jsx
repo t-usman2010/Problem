@@ -34,7 +34,13 @@ export default function HeatmapLayer({ issues = [] }) {
     }).addTo(map)
 
     return () => {
-      map.removeLayer(heatLayer)
+      try {
+        if (map && map._panes) {
+          map.removeLayer(heatLayer)
+        }
+      } catch (_) {
+        // Map or layer already unmounted
+      }
     }
   }, [map, issues])
 

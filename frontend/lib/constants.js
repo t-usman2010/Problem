@@ -9,6 +9,7 @@ export const CATEGORIES = [
 export const STATUSES = [
   { value: 'pending', label: 'Pending', color: '#ef4444' },
   { value: 'in-progress', label: 'In Progress', color: '#eab308' },
+  { value: 'awaiting-confirmation', label: 'Awaiting Confirmation', color: '#f97316' },
   { value: 'resolved', label: 'Resolved', color: '#22c55e' }
 ]
 
@@ -19,4 +20,4 @@ export const MAP_DEFAULTS = {
 
 export const getCategoryColor = (category) => CATEGORIES.find(c => c.value === category)?.color ?? '#6b7280'
 export const getStatusColor = (status) => STATUSES.find(s => s.value === status)?.color ?? '#ef4444'
-export const getStatusOpacity = (status) => ({ pending: 1, 'in-progress': 0.8, resolved: 0.4 }[status] ?? 1)
+export const getStatusOpacity = (status) => ({ pending: 1, 'in-progress': 0.8, 'awaiting-confirmation': 0.7, resolved: 0.4 }[status] ?? 1)

@@ -353,7 +353,8 @@ Track your report: ${process.env.CLIENT_URL || 'http://localhost:3000'}/issue/${
 }
 
 /**
- * 3. Email sent when report status changes to "resolved"
+ * 3. Email sent when report status changes to "awaiting-confirmation"
+ *    Asks the user to confirm whether the issue is actually resolved.
  */
 const sendReportResolvedEmail = async (user, issue) => {
   const recipientEmail = user?.email || issue.reportedBy?.email
@@ -361,29 +362,107 @@ const sendReportResolvedEmail = async (user, issue) => {
 
   if (!recipientEmail) return
 
-  const subject = `Resolved: Your Report Has Been Fixed! (CivicReport #${issue._id.toString().slice(-6)})`
-  const intro = `Hello ${recipientName}, we are pleased to inform you that your reported hazard "${issue.title}" has been successfully resolved!`
-  const message = `Municipal crews have completed the repairs and verified the resolution. Thank you for being an active, proactive citizen in our smart city community!`
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000'
+  const subject = `Action Required: Confirm Resolution of Your Report (CivicReport #${issue._id.toString().slice(-6)})`
+  const intro = `Hello ${recipientName}, our admin team has marked your reported issue "${issue.title}" as resolved. Please review and confirm whether the issue has actually been fixed.`
+  const message = `Please visit your "My Reports" page to confirm or reject this resolution. If the issue has been properly fixed, confirm it and we will close the report. If the problem persists, reject it and we will re-open the complaint for further action.`
 
   const html = renderEmailTemplate({
-    heading: 'Problem Resolved Successfully',
+    heading: 'Confirm: Has Your Issue Been Resolved?',
+    badgeText: 'Action Required: Confirm Resolution',
+    badgeBg: '#fef3c7',
+    badgeColor: '#b45309',
+    intro,
+    issue,
+    message,
+    ctaText: 'Go to My Reports',
+    ctaUrl: `${clientUrl}/my-reports`
+  })
+
+  const text = `
+Hello ${recipientName},
+
+Our admin team has marked your reported issue "${issue.title}" (ID: #${issue._id}) as resolved.
+
+Please confirm whether this issue has actually been fixed by visiting your "My Reports" page.
+- If the issue is resolved, confirm it.
+- If the problem persists, reject it and we will re-open your complaint.
+
+Go to My Reports: ${clientUrl}/my-reports
+  `
+
+  return sendMail({ to: recipientEmail, subject, html, text })
+}
+
+/**
+ * 4. Email sent when user confirms the resolution
+ */
+const sendResolutionConfirmedEmail = async (user, issue) => {
+  const recipientEmail = user?.email || issue.reportedBy?.email
+  const recipientName = user?.name || issue.reportedBy?.name || 'Citizen'
+
+  if (!recipientEmail) return
+
+  const subject = `Resolved & Confirmed: ${issue.title} (CivicReport #${issue._id.toString().slice(-6)})`
+  const intro = `Hello ${recipientName}, thank you for confirming! Your reported issue "${issue.title}" has been officially marked as resolved and closed.`
+  const message = `The issue has been verified as resolved by you and our municipal team. Thank you for being an active, proactive citizen in our smart city community! Your contribution helps make our city safer and better for everyone.`
+
+  const html = renderEmailTemplate({
+    heading: 'Issue Resolved & Confirmed',
     badgeText: 'Status: Resolved & Verified',
     badgeBg: '#dcfce7',
     badgeColor: '#15803d',
     intro,
     issue,
     message,
-    ctaText: 'Inspect Verified Report'
+    ctaText: 'View Resolved Report'
   })
 
   const text = `
 Hello ${recipientName},
 
-We are pleased to inform you that your reported issue "${issue.title}" (ID: #${issue._id}) has been marked as RESOLVED!
+Your reported issue "${issue.title}" (ID: #${issue._id}) has been officially resolved and confirmed.
 
 Thank you for contributing to a cleaner, safer, and more sustainable city!
 
-View verified issue: ${process.env.CLIENT_URL || 'http://localhost:3000'}/issue/${issue._id}
+View your report: ${process.env.CLIENT_URL || 'http://localhost:3000'}/issue/${issue._id}
+  `
+
+  return sendMail({ to: recipientEmail, subject, html, text })
+}
+
+/**
+ * 5. Email sent when user rejects the resolution
+ */
+const sendResolutionRejectedEmail = async (user, issue) => {
+  const recipientEmail = user?.email || issue.reportedBy?.email
+  const recipientName = user?.name || issue.reportedBy?.name || 'Citizen'
+
+  if (!recipientEmail) return
+
+  const subject = `Re-Opened: Your Report Has Been Re-Registered (CivicReport #${issue._id.toString().slice(-6)})`
+  const intro = `Hello ${recipientName}, we understand that the issue "${issue.title}" has not been fully resolved. Your complaint has been re-registered and will be reviewed again by our municipal team.`
+  const message = `Since you indicated that the problem persists, we have re-opened your report and set it back to pending status. Our team will re-examine the issue and take further corrective action. We apologize for the inconvenience.`
+
+  const html = renderEmailTemplate({
+    heading: 'Complaint Re-Registered',
+    badgeText: 'Status: Re-Opened',
+    badgeBg: '#fee2e2',
+    badgeColor: '#b91c1c',
+    intro,
+    issue,
+    message,
+    ctaText: 'Track Your Report'
+  })
+
+  const text = `
+Hello ${recipientName},
+
+Your reported issue "${issue.title}" (ID: #${issue._id}) has been re-opened because you indicated it was not resolved.
+
+Our municipal team will re-examine and take further action. We apologize for the inconvenience.
+
+Track your report: ${process.env.CLIENT_URL || 'http://localhost:3000'}/issue/${issue._id}
   `
 
   return sendMail({ to: recipientEmail, subject, html, text })
@@ -393,5 +472,7 @@ module.exports = {
   sendMail,
   sendReportSubmittedEmail,
   sendReportProcessingEmail,
-  sendReportResolvedEmail
+  sendReportResolvedEmail,
+  sendResolutionConfirmedEmail,
+  sendResolutionRejectedEmail
 }

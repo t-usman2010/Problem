@@ -17,7 +17,11 @@ const statsRoutes = require('./routes/stats')
 const app = express()
 
 // Security & utility middleware
-app.use(helmet())
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' }
+  })
+)
 app.use(cors(corsOptions))
 app.use(compression())
 app.use(express.json())

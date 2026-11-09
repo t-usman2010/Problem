@@ -45,7 +45,7 @@ const validDepts = [
 ]
 
 const updateStatusSchema = z.object({
-  status: z.enum(['pending', 'in-progress', 'resolved']).optional(),
+  status: z.enum(['pending', 'in-progress', 'awaiting-confirmation', 'resolved']).optional(),
   assignedDept: z.enum(validDepts).optional()
 }).refine(data => data.status !== undefined || data.assignedDept !== undefined, {
   message: 'At least one of status or assignedDept must be provided'

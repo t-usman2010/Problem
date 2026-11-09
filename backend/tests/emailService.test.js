@@ -81,5 +81,5 @@ test('sendReportResolvedEmail dispatches notification when issue is marked resol
 
   const parsed = JSON.parse(result.message)
   assert.equal(parsed.to[0].address, 'bilal@example.com')
-  assert.ok(parsed.subject.includes('Resolved'))
+  assert.ok(parsed.subject.includes('Resolution') || parsed.subject.includes('Resolved'))
 })

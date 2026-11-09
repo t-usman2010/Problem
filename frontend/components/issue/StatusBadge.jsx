@@ -1,17 +1,19 @@
 'use client'
-import { Clock, Loader, CheckCircle } from 'lucide-react'
+import { Clock, Loader, CheckCircle, AlertCircle } from 'lucide-react'
 import { getStatusColor } from '@/lib/constants'
 import { useTranslations } from '@/context/LocaleContext'
 
 const statusIcons = {
   'pending': Clock,
   'in-progress': Loader,
+  'awaiting-confirmation': AlertCircle,
   'resolved': CheckCircle
 }
 
 const statusDefaultLabels = {
   'pending': 'Pending',
   'in-progress': 'In Progress',
+  'awaiting-confirmation': 'Awaiting Confirmation',
   'resolved': 'Resolved'
 }
 
@@ -21,7 +23,7 @@ export default function StatusBadge({ status, size = 'sm' }) {
   const color = getStatusColor(status)
   const sizeClasses = size === 'sm' ? 'text-[10px] px-2.5 py-1' : 'text-xs px-3.5 py-1.5'
 
-  const statusKey = status === 'in-progress' ? 'inProgress' : status
+  const statusKey = status === 'in-progress' ? 'inProgress' : status === 'awaiting-confirmation' ? 'awaitingConfirmation' : status
   const label = t(statusKey, { defaultValue: statusDefaultLabels[status] || status })
 
   return (

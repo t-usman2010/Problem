@@ -28,9 +28,13 @@ const STATUS_COLORS = {
   pending: '#f85149',
   'in-progress': '#d29922',
   'in progress': '#d29922',
+  'awaiting-confirmation': '#f97316',
+  'awaiting confirmation': '#f97316',
   resolved: '#3fb950',
   Pending: '#f85149',
   'In Progress': '#d29922',
+  'Awaiting Confirmation': '#f97316',
+  'Awaiting confirmation': '#f97316',
   Resolved: '#3fb950'
 };
 
@@ -93,6 +97,8 @@ export default function AnalyticsCharts({ issues = [] }) {
   const statusData = Object.keys(statusCounts).map(key => {
     const displayName = (key === 'in-progress' || key === 'in progress')
       ? 'In Progress'
+      : (key === 'awaiting-confirmation' || key === 'awaiting confirmation')
+      ? 'Awaiting Confirmation'
       : key.charAt(0).toUpperCase() + key.slice(1);
     return {
       name: displayName,

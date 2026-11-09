@@ -7,10 +7,33 @@ import HeatmapLayer from './HeatmapLayer'
 import { MAP_DEFAULTS } from '@/lib/constants'
 import 'leaflet/dist/leaflet.css'
 
-export default function MapView({ issues = [], onMapReady, showHeatmap = false }) {
+const CARTO_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY || 'cb1_527g_1_43c67470bfbedd5c224408ac'
+
+const TILE_PROVIDERS = {
+  voyager: {
+    url: `https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${CARTO_KEY}`,
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  },
+  dark: {
+    url: `https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=${CARTO_KEY}`,
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  },
+  satellite: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; <a href="https://www.esri.com/">Esri</a>'
+  },
+  streets: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }
+}
+
+export default function MapView({ issues = [], onMapReady, showHeatmap = false, mapStyle = 'voyager' }) {
   const mapRef = useRef(null)
   const prevIssueIdsRef = useRef(new Set())
   const [newIssueIds, setNewIssueIds] = useState(new Set())
+
+  const activeTile = TILE_PROVIDERS[mapStyle] || TILE_PROVIDERS.voyager
 
   useEffect(() => {
     const currentIds = new Set(issues.map(i => i._id))
@@ -46,8 +69,9 @@ export default function MapView({ issues = [], onMapReady, showHeatmap = false }
       style={{ background: 'var(--color-bg-base, #06080d)' }}
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url={process.env.NEXT_PUBLIC_MAP_TILE_URL || 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'}
+        key={mapStyle}
+        attribution={activeTile.attribution}
+        url={activeTile.url}
       />
       {showHeatmap ? (
         <HeatmapLayer issues={issues} />

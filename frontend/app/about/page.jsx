@@ -147,15 +147,15 @@ export default function AboutPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8 pb-3 sm:pb-4 border-b border-[#21262d]">
             <div>
               <div className="flex items-center gap-1.5 text-xs font-bold text-[#f99d26] uppercase tracking-widest mb-1">
-                <Target className="w-4 h-4" /> {t('sdgBadge')}
+                <Target className="w-4 h-4" /> {t('sdgBadge', { defaultValue: 'United Nations Alignment' })}
               </div>
               <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#f0f6fc]">
-                {t('sdgHeading')}
+                {t('sdgHeading', { defaultValue: 'Commitment to the 2030 Agenda' })}
               </h2>
             </div>
             {/* Monospace untranslated badge */}
             <span className="px-3 py-1 rounded-xl bg-[#161b22] border border-[#21262d] text-xs font-semibold text-[#7d8590] self-start sm:self-auto untranslated" dir="ltr">
-              {t('sdgGoalsTag')}
+              {t('sdgGoalsTag', { defaultValue: 'UN SDGs 11 • 9 • 6 • 16' })}
             </span>
           </div>
 
@@ -188,7 +188,7 @@ export default function AboutPage() {
                             className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider block"
                             style={{ color: sdg.color }}
                           >
-                            {t('sdgGoalLabel', { number: sdg.number })}
+                            {t('sdgGoalLabel', { number: sdg.number, defaultValue: `UN SDG ${sdg.number}` })}
                           </span>
                           <h3 className="text-base sm:text-lg font-bold text-[#f0f6fc] leading-snug">
                             {sdg.title}

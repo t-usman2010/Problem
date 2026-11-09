@@ -9,6 +9,7 @@ function IssueMarker({ issue, isNew = false }) {
   const color = getCategoryColor(issue.category)
   const opacity = getStatusOpacity(issue.status)
   const isDashed = issue.status === 'in-progress'
+  const isPulsing = issue.status === 'awaiting-confirmation'
 
   const icon = L.divIcon({
     className: `custom-marker${isNew ? ' marker-animate-in' : ''}`,
@@ -25,6 +26,7 @@ function IssueMarker({ issue, isNew = false }) {
         align-items: center;
         justify-content: center;
         box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        ${isPulsing ? 'animation: pulse 2s infinite; border: 3px solid #f97316;' : ''}
         cursor: pointer;
       ">
         <div style="

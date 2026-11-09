@@ -8,6 +8,7 @@ const {
   getIssuePhoto,
   createIssue,
   updateStatus,
+  confirmResolution,
   toggleUpvote,
   deleteIssue
 } = require('../controllers/issueController')
@@ -31,6 +32,7 @@ router.get('/:id/photo', getIssuePhoto)
 router.get('/:id/comments', getComments)
 router.post('/:id/comments', auth, validate(addCommentSchema), addComment)
 router.patch('/:id/status', auth, role('admin'), validate(updateStatusSchema), updateStatus)
+router.patch('/:id/confirm-resolution', auth, role('citizen'), confirmResolution)
 router.post('/:id/upvote', auth, role('citizen'), toggleUpvote)
 router.delete('/:id', auth, role('admin'), deleteIssue)
 

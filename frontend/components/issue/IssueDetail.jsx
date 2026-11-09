@@ -8,7 +8,8 @@ import api from '@/lib/api'
 import StatusBadge from './StatusBadge'
 import CategoryIcon from './CategoryIcon'
 import Button from '@/components/ui/Button'
-import { Heart, MapPin, Calendar, User, Send, MessageCircle } from 'lucide-react'
+import { Heart, MapPin, Calendar, User, Send, MessageCircle, CheckCircle2, Clock, AlertCircle, ThumbsUp, ThumbsDown, Check, Shield } from 'lucide-react'
+import { motion, AnimatePresence } from 'motion/react'
 
 const MiniMap = dynamic(() => import('@/components/map/MiniMap'), { ssr: false })
 
@@ -192,16 +193,33 @@ export default function IssueDetail({ issue: initialIssue }) {
     }
   }
 
+  const [confirming, setConfirming] = useState(false)
+
+  // Citizen resolution confirmation
+  const handleCitizenConfirm = async (confirmed) => {
+    setConfirming(true)
+    try {
+      const res = await api.patch(`/issues/${issue._id}/confirm-resolution`, { confirmed })
+      setIssue(prev => ({ ...prev, ...res.data.issue }))
+      toast.success(confirmed ? 'Resolution confirmed! Problem marked as verified & resolved.' : 'Issue re-opened and queued for municipal repair.')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update confirmation')
+    } finally {
+      setConfirming(false)
+    }
+  }
+
   const issueLat = issue.latitude ?? (issue.location?.coordinates ? issue.location.coordinates[1] : null)
   const issueLng = issue.longitude ?? (issue.location?.coordinates ? issue.location.coordinates[0] : null)
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Photo */}
-      {issue.photo && (
+      {issue.photoUrl && (
         <div className="relative aspect-video rounded-2xl overflow-hidden border border-[#21262d] group">
           <img
-            src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${issue.photo}`}
+            src={issue.photoUrl.includes('?') ? issue.photoUrl : `${issue.photoUrl}?v=corp`}
+            crossOrigin="anonymous"
             alt={t('photoAlt', { category: issue.category, defaultValue: `Photo of reported ${issue.category} issue` })}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -238,6 +256,112 @@ export default function IssueDetail({ issue: initialIssue }) {
             {typeof issue.upvotes === 'number' ? issue.upvotes : (issue.upvoteCount ?? (Array.isArray(issue.upvotes) ? issue.upvotes.length : 0))}
           </span>
         </button>
+      </div>
+
+      {/* ═══════════════════════════════════════════
+          INTERACTIVE MUNICIPAL RESOLUTION TIMELINE
+          ═══════════════════════════════════════════ */}
+      <div className="rounded-2xl border border-[#21262d] bg-[#0d1117] p-4 sm:p-5 overflow-hidden">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#58a6ff] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#58a6ff]" />
+            </span>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#f0f6fc]">
+              Municipal Lifecycle Stepper
+            </span>
+          </div>
+          {issue.assignedDept && (
+            <span className="text-[11px] font-semibold text-[#bc8cff] bg-[#7c3aed]/15 border border-[#7c3aed]/30 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <Shield className="h-3 w-3" /> {issue.assignedDept}
+            </span>
+          )}
+        </div>
+
+        {/* 4-Step Progress Track */}
+        {(() => {
+          const currentStep = {
+            'pending': 1,
+            'in-progress': 2,
+            'awaiting-confirmation': 3,
+            'resolved': 4
+          }[issue.status] || 1
+
+          const steps = [
+            { num: 1, label: 'Reported', desc: 'Logged & queued', icon: Clock },
+            { num: 2, label: 'Dispatched', desc: issue.assignedDept || 'Crew assigned', icon: Shield },
+            { num: 3, label: 'Citizen Verify', desc: 'Sign-off required', icon: AlertCircle },
+            { num: 4, label: 'Resolved', desc: 'Closed & verified', icon: CheckCircle2 }
+          ]
+
+          return (
+            <div className="grid grid-cols-4 gap-2 sm:gap-3 text-center relative pt-2">
+              {steps.map((st) => {
+                const isPassed = currentStep > st.num
+                const isCurrent = currentStep === st.num
+                const StepIcon = st.icon
+
+                return (
+                  <div key={st.num} className="flex flex-col items-center relative z-10">
+                    <div
+                      className={`h-9 w-9 rounded-xl flex items-center justify-center font-bold text-xs mb-2 transition-all duration-300 shadow-md ${
+                        isPassed
+                          ? 'bg-[#3fb950] text-white shadow-[0_0_12px_rgba(63,185,80,0.4)]'
+                          : isCurrent
+                          ? st.num === 3
+                            ? 'bg-[#f97316] text-white ring-4 ring-[#f97316]/25 animate-pulse'
+                            : 'bg-[#58a6ff] text-white ring-4 ring-[#58a6ff]/25'
+                          : 'bg-[#161b22] text-[#484f58] border border-[#21262d]'
+                      }`}
+                    >
+                      {isPassed ? <Check className="h-4 w-4 stroke-[3]" /> : <StepIcon className="h-4 w-4" />}
+                    </div>
+                    <span className={`text-[11px] sm:text-xs font-bold leading-tight ${isCurrent ? 'text-[#f0f6fc]' : isPassed ? 'text-[#3fb950]' : 'text-[#7d8590]'}`}>
+                      {st.label}
+                    </span>
+                    <span className="text-[10px] text-[#484f58] mt-0.5 hidden sm:block truncate max-w-full">
+                      {st.desc}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          )
+        })()}
+
+        {/* Interactive In-Page Citizen Confirmation Card */}
+        {issue.status === 'awaiting-confirmation' && (
+          <div className="mt-5 p-4 rounded-xl border border-[#f97316]/40 bg-gradient-to-r from-[#f97316]/10 to-transparent">
+            <div className="flex items-center gap-2 mb-1.5 text-[#f97316]">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider">Citizen Sign-Off Required</span>
+            </div>
+            <p className="text-xs text-[#c9d1d9] mb-3 leading-relaxed">
+              Municipal response teams have completed repair work. Has this complaint been adequately fixed in your area?
+            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => handleCitizenConfirm(true)}
+                disabled={confirming}
+                className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[#22c55e]/15 border border-[#22c55e]/30 text-[#22c55e] text-xs font-bold hover:bg-[#22c55e]/25 transition-all disabled:opacity-50"
+              >
+                <ThumbsUp className="h-3.5 w-3.5" />
+                <span>Yes, Problem is Resolved</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCitizenConfirm(false)}
+                disabled={confirming}
+                className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[#ef4444]/15 border border-[#ef4444]/30 text-[#ef4444] text-xs font-bold hover:bg-[#ef4444]/25 transition-all disabled:opacity-50"
+              >
+                <ThumbsDown className="h-3.5 w-3.5" />
+                <span>No, Still Not Fixed (Re-open)</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Description */}

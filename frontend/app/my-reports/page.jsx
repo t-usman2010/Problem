@@ -10,8 +10,9 @@ import IssueCard from '@/components/issue/IssueCard'
 import Spinner from '@/components/ui/Spinner'
 import EmptyState from '@/components/ui/EmptyState'
 import { CardSkeleton } from '@/components/ui/SkeletonLoader'
-import { FileText, AlertCircle, Plus, Lock, LogIn, CheckCircle2, Clock, Loader2 } from 'lucide-react'
+import { FileText, AlertCircle, Plus, Lock, LogIn, CheckCircle2, Clock, Loader2, MapPin, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { motion } from 'motion/react'
+import StatusBadge from '@/components/issue/StatusBadge'
 
 export default function MyReportsPage() {
   const { user, isLoading } = useAuth()
@@ -21,6 +22,7 @@ export default function MyReportsPage() {
   const [issues, setIssues] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [confirmingId, setConfirmingId] = useState(null)
 
   useEffect(() => {
     if (user) {
@@ -95,7 +97,21 @@ export default function MyReportsPage() {
 
   const pendingCount = issues.filter(i => i.status === 'pending').length
   const inProgressCount = issues.filter(i => i.status === 'in-progress').length
+  const awaitingCount = issues.filter(i => i.status === 'awaiting-confirmation').length
   const resolvedCount = issues.filter(i => i.status === 'resolved').length
+
+  const handleConfirmResolution = async (issueId, confirmed) => {
+    setConfirmingId(issueId)
+    try {
+      const res = await api.patch(`/issues/${issueId}/confirm-resolution`, { confirmed })
+      setIssues(prev => prev.map(i => i._id === issueId ? { ...i, ...res.data.issue } : i))
+      toast.success(confirmed ? 'Issue confirmed as resolved!' : 'Issue has been re-registered.')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to confirm resolution')
+    } finally {
+      setConfirmingId(null)
+    }
+  }
 
   return (
     <div className="relative min-h-[calc(100vh-64px)] mt-16 px-3 sm:px-4 py-6 sm:py-10 pb-28 md:pb-12 max-w-3xl mx-auto">
@@ -139,7 +155,7 @@ export default function MyReportsPage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 sm:mb-8"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-6 sm:mb-8"
           >
             <div className="p-3 sm:p-4 rounded-2xl bg-[#0d1117] border border-[#21262d] text-center">
               <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs text-[#7d8590] mb-1 font-medium">
@@ -152,6 +168,12 @@ export default function MyReportsPage() {
                 <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#eab308]" /> {t('inProgress', { defaultValue: 'In Progress' })}
               </div>
               <span className="text-lg sm:text-2xl font-bold text-[#f0f6fc]">{inProgressCount}</span>
+            </div>
+            <div className="p-3 sm:p-4 rounded-2xl bg-[#0d1117] border border-[#21262d] text-center">
+              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs text-[#7d8590] mb-1 font-medium">
+                <AlertCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#f97316]" /> {t('awaitingConfirmation', { defaultValue: 'Awaiting' })}
+              </div>
+              <span className="text-lg sm:text-2xl font-bold text-[#f0f6fc]">{awaitingCount}</span>
             </div>
             <div className="p-3 sm:p-4 rounded-2xl bg-[#0d1117] border border-[#21262d] text-center">
               <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs text-[#7d8590] mb-1 font-medium">
@@ -182,7 +204,55 @@ export default function MyReportsPage() {
           />
         ) : (
           <div className="space-y-4">
-            {issues.map(issue => (
+            {/* Awaiting Confirmation Issues - Show First */}
+            {issues.filter(i => i.status === 'awaiting-confirmation').map(issue => (
+              <motion.div
+                key={issue._id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl border-2 border-[#f97316]/30 bg-gradient-to-r from-[#f97316]/5 to-transparent p-4 sm:p-5"
+              >
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <StatusBadge status={issue.status} />
+                    </div>
+                    <h3 className="text-sm font-semibold text-[#f0f6fc] truncate">{issue.title}</h3>
+                    {issue.address && (
+                      <p className="text-xs text-[#7d8590] mt-1 flex items-center gap-1">
+                        <MapPin className="h-3 w-3" /> {issue.address}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-[#f97316]/10 border border-[#f97316]/20 mb-4">
+                  <AlertCircle className="h-4 w-4 text-[#f97316] shrink-0" />
+                  <p className="text-xs text-[#f97316]">
+                    The admin has marked this issue as resolved. Please confirm if the problem has actually been fixed.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleConfirmResolution(issue._id, true)}
+                    disabled={confirmingId === issue._id}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/20 text-[#22c55e] text-sm font-semibold hover:bg-[#22c55e]/20 transition-all disabled:opacity-50"
+                  >
+                    <ThumbsUp className="h-4 w-4" />
+                    Yes, Resolved
+                  </button>
+                  <button
+                    onClick={() => handleConfirmResolution(issue._id, false)}
+                    disabled={confirmingId === issue._id}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#ef4444]/10 border border-[#ef4444]/20 text-[#ef4444] text-sm font-semibold hover:bg-[#ef4444]/20 transition-all disabled:opacity-50"
+                  >
+                    <ThumbsDown className="h-4 w-4" />
+                    No, Not Fixed
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+            {/* Regular Issue Cards */}
+            {issues.filter(i => i.status !== 'awaiting-confirmation').map(issue => (
               <IssueCard key={issue._id} issue={issue} />
             ))}
           </div>

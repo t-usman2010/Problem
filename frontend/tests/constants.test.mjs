@@ -48,7 +48,7 @@ test('CATEGORIES and STATUSES have valid schema structures', () => {
     assert.ok(cat.color)
   })
 
-  assert.equal(STATUSES.length, 3)
+  assert.equal(STATUSES.length, 4)
   STATUSES.forEach(st => {
     assert.ok(st.value)
     assert.ok(st.label)
